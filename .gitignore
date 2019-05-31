@@ -34,3 +34,12 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+dataCleaner/global-trinhdhk-OptiPlex-7010.R
+dataCleaner/server-trinhdhk-OptiPlex-7010.R
+dataCleaner/ui-trinhdhk-OptiPlex-7010.R
+dataCleaner/www/main-trinhdhk-OptiPlex-7010.js
+dataCleaner/www/etc/lib-trinhdhk-OptiPlex-7010.js
+dataCleaner/www/scripts-trinhdhk-OptiPlex-7010.js
+dataCleaner/www/styles-trinhdhk-OptiPlex-7010.css
+dataCleaner/www/styles-trinhdhk-OptiPlex-7010.scss
+*.map
