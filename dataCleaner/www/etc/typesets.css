@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Mono&subset=latin-ext");
+@import url("./etc/fabric.min.css");
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url("fonts/materialicons/MaterialIcons-Regular.eot");
+  /* For IE6-8 */
+  src: local("Material Icons"), local("MaterialIcons-Regular"), url("fonts/materialicons/MaterialIcons-Regular.woff2") format("woff2"), url("fonts/materialicons/MaterialIcons-Regular.woff") format("woff"), url("fonts/materialicons/MaterialIcons-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'banschrift-online';
+  src: url("fonts/bahnschrift.ttf");
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url("fonts/fa-solid-900.ttf");
+}
+
+@font-face {
+  font-family: 'FiraSans';
+  font-style: normal;
+  font-weight: normal;
+  src: url("fonts/FiraSans-Regular.otf");
+}
+
+@font-face {
+  font-family: 'FiraSans';
+  font-style: italic;
+  font-weight: normal;
+  src: url("fonts/FiraSans-BookItalic.otf");
+}
+
+@font-face {
+  font-family: 'FiraSans';
+  font-style: normal;
+  font-weight: bold;
+  src: url("fonts/FiraSans-SemiBold.otf");
+}
+
+@font-face {
+  font-family: 'FiraSans';
+  font-style: italic;
+  font-weight: bold;
+  src: url("fonts/FiraSans-SemiBoldItalic.otf");
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  -webkit-font-feature-settings: 'liga';
+          font-feature-settings: 'liga';
+}
+/*# sourceMappingURL=typesets.css.map */

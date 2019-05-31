@@ -1,0 +1,38 @@
+#sidebar {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 30vw;
+}
+
+#sidebar div {
+  overflow-x: hidden;
+}
+
+#sidebar .navlist-outer {
+  width: 100%;
+}
+
+#sidebar .navlist-outer .col-sm-11 {
+  width: 100%;
+}
+
+#sidebar .navlist-outer .col-sm-1 {
+  width: 0;
+}
+
+#sidebar .navlist-outer.active .col-sm-1 .tab-content > .active {
+  display: block;
+  position: fixed;
+  width: 70vw;
+  left: 32vw;
+  top: 20px;
+  height: 200px;
+  -webkit-box-shadow: 0px 0px 5px var(--color-shadow-light);
+          box-shadow: 0px 0px 5px var(--color-shadow-light);
+  z-index: 100;
+  padding: 10px;
+  border: 4px;
+  background: var(--color-background-light-transparent);
+}
+/*# sourceMappingURL=sidebar.css.map */

@@ -2,7 +2,8 @@
 
 library(shiny)
 library(shinyWidgets)
-library(shinydashboard)
+# library(shinydashboard)
+library(shinyjs)
 library(tidyverse)
 library(DT)
 library(rhandsontable)
@@ -12,4 +13,6 @@ library(hunspell)
 library(stringr)
 library(jsonlite)
 library(tools)
+library(rlist)
+library(vroom)
 
