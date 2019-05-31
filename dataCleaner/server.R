@@ -6,12 +6,12 @@ shinyServer(function(session, input, output) {
   dataset$ready <- FALSE #save the ready state of dataset
   show_fullUI <- reactiveVal(FALSE)
   misc <- new.env()
-  source('.includes/misc.R', local=misc)
+  source('includes/misc.R', local=misc)
   ui_build <- new.env()
-  source('.includes/ui_build.R', local=ui_build)
+  source('includes/ui_build.R', local=ui_build)
   cleanify <- new.env()
-  source('.includes/cleanify.main.R', local=cleanify)
-  source('.includes/cleanify.ruleChk.R', local=cleanify)
+  source('includes/cleanify.main.R', local=cleanify)
+  source('includes/cleanify.ruleChk.R', local=cleanify)
 
   #A Temp block for hidden element
    output$tmp <-
@@ -194,21 +194,19 @@ shinyServer(function(session, input, output) {
     
  
   
-  output$msd_all <-
-    renderUI(
-      div('aaa')
-    )
+  output$checkOptions <-
+    renderUI(ui_build$checkOptions_builder())
 
 
   output$fullProgram <-
     renderUI(
       navbarPage(
         title = '🤖 Data Clean Robot',
-        tabPanel('Overview',
-          tags$script('$(".tab-content .tab-pane[data-value=\'Overview\']").append($(\'#DT\'));'),
+        tabPanel('Quick Check',
+          tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").append($(\'#DT\'));'),
           class = 'grand-tab'
         ),
-        tabPanel('Check Options',
+        tabPanel('Custom Plan',
           uiOutput('defTableHolder'),
           # rHandsontableOutput('defTable'),
           class = 'grand-tab'
@@ -220,7 +218,12 @@ shinyServer(function(session, input, output) {
         header = div(
           id = 'full-program',
           class = 'shadowSurge',
-          tags$script(src='etc/nav-bar.js')
+          tags$script(src='etc/nav-bar.js'),
+          div(
+            id = 'checkOptions-holder',
+            class = 'options float',
+            uiOutput('checkOptions')
+          )
         )
       )  
     )
