@@ -6,4 +6,7 @@ navlistBuild <- function(names, uis, render){
     })
 }
 
-uice
+# checkOptions_build <- function(){
+#     out <- navlistbui
+#         
+# }
