@@ -2,7 +2,6 @@
 
 library(shiny)
 library(shinyWidgets)
-# library(shinydashboard)
 library(shinyjs)
 library(tidyverse)
 library(DT)
@@ -15,4 +14,8 @@ library(jsonlite)
 library(tools)
 library(rlist)
 library(vroom)
+library(promises)
+library(future)
+plan(multiprocess)
 
+# dev <- TRUE

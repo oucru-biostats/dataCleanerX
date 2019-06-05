@@ -1,8 +1,7 @@
 shinyUI(
-  # uiOutput('uiMaster')
   fluidPage(
 
-    tags$title('🤖 Data Cleaner Robot'),
+    tags$title('🤖 Data-Clean Robot'),
     tags$meta(name="viewport", content="width=device-width, initial-scale=1.0"),
     tags$link(rel='stylesheet', href="styles.css"),
     # tags$link(rel='stylesheet', href="dialogs.css"),

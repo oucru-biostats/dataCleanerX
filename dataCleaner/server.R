@@ -12,6 +12,12 @@ shinyServer(function(session, input, output) {
   cleanify <- new.env()
   source('includes/cleanify.main.R', local=cleanify)
   source('includes/cleanify.ruleChk.R', local=cleanify)
+  methods <- list(meta = read_json('includes/methods/meta.json'))
+  methods$names <- names(methods$meta)
+  # if (dev) {
+  #   dev <- new.env()
+  #   source('dev.R', local=dev)
+  # }
 
   #A Temp block for hidden element
    output$tmp <-
@@ -33,7 +39,7 @@ shinyServer(function(session, input, output) {
         renderUI(
           pickerInput(
             inputId = "sheetPick",
-            label = "Please select data sheet.",
+            label = "Please select one table",
             choices = dataset$sheetsList,
             options = pickerOptions(
               title = '(Select one)',
@@ -179,9 +185,12 @@ shinyServer(function(session, input, output) {
 
   output$meta <-
     renderUI(
-      p('Release 3. Build Number X')
+      a(
+        sprintf("Version %s, build %d (%s), %s", ui_build$AppInfo$version, ui_build$AppInfo$build, ui_build$AppInfo$buildDate, ui_build$AppInfo$owner),
+        href = ui_build$AppInfo$contact
+        )
     )
-
+  
   output$fileInput <-
     renderUI(
       fileInput(inputId = 'datasource',
@@ -191,39 +200,37 @@ shinyServer(function(session, input, output) {
                            ".csv", ".xls", ".xlsx")
       )
     )
-    
- 
   
-  output$checkOptions <-
-    renderUI(ui_build$checkOptions_builder())
 
 
   output$fullProgram <-
     renderUI(
-      navbarPage(
-        title = '🤖 Data Clean Robot',
-        tabPanel('Quick Check',
-          tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").append($(\'#DT\'));'),
-          class = 'grand-tab'
-        ),
-        tabPanel('Custom Plan',
-          uiOutput('defTableHolder'),
-          # rHandsontableOutput('defTable'),
-          class = 'grand-tab'
-        ),
-        tabPanel('Result',
-          uiOutput('result'),
-          class = 'grand-tab'
-        ),
-        header = div(
-          id = 'full-program',
-          class = 'shadowSurge',
-          tags$script(src='etc/nav-bar.js'),
-          div(
-            id = 'checkOptions-holder',
-            class = 'options float',
-            uiOutput('checkOptions')
+      list(
+        navbarPage(
+          title = '🤖 Data-Clean Robot',
+          tabPanel('Quick Check',
+                   tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").append($(\'#DT\'));'),
+                   class = 'grand-tab'
+          ),
+          tabPanel('Custom Plan',
+                   uiOutput('defTableHolder'),
+                   # rHandsontableOutput('defTable'),
+                   class = 'grand-tab'
+          ),
+          tabPanel('Result',
+                   uiOutput('result'),
+                   class = 'grand-tab'
+          ),
+          header = div(
+            id = 'full-program',
+            class = 'shadowSurge',
+            tags$script(src='etc/nav-bar.js')
           )
+        ),
+        div(
+          id = 'checkUI-holder',
+          class = 'options float',
+          uiOutput('checkUI')
         )
       )  
     )
@@ -286,8 +293,8 @@ shinyServer(function(session, input, output) {
                               }, USE.NAMES = FALSE)
     missing <- rep(NA, length(type))
     dataset$availTestNames <- c('Missing Data', 'Outliers/Loners', 'Binary', 'Whitespaces', 'Spelling', 'Serial Data')
-    availTests <- matrix(rep(FALSE, length(dataset$availTestNames)*length(dataset$colnames)), ncol = length(dataset$availTestNames))
-    colnames(availTests) <- dataset$availTestNames
+    availTests <- matrix(rep(FALSE, length(methods$names)*length(dataset$colnames)), ncol = length(methods$names))
+    colnames(availTests) <- methods$names
     dataset$defTable <- 
       cbind(varName = dataset$colnames, type = type, values = values, rules = "", availTests)
     row.names(dataset$defTable) <- NULL
@@ -317,19 +324,16 @@ shinyServer(function(session, input, output) {
       hot_col(col = 'values', placeholder = '{a, b, c} or [min, max]') %>%
       hot_col(col = 'rules', placeholder = '=') %>%
       (function(tab) {
-        for (test in dataset$availTestNames) {
+        for (test in methods$names) {
           tab <- hot_col(tab, col = test, type='checkbox')
         }
         tab
       })
   )
-
-  output$checkOptions <-
-    renderUI(
-      navlistPanel(ui_build$navListBuild(avaiTests))
-    )
-
-  misc$set_always_on(
+  
+  output$checkUI <- renderUI(ui_build$navlistBuild(methods$names)) 
+  
+   misc$set_always_on(
     c('inputBox', 'DT', 'fullProgram', 'defTable'),
     output = output)  
 })

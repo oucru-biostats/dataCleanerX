@@ -511,6 +511,16 @@ body #foreground #text .lds-roller {
   pointer-events: none;
 }
 
+#checkUI-holder {
+  padding: 0 5px 5px 5px;
+  position: fixed;
+  top: calc(50vh - 61px);
+  left: 0;
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+}
+
 #DT .dataTables_length {
   margin-left: 10px;
 }
@@ -816,8 +826,12 @@ body #foreground #text .lds-roller {
 
 #inputDialog label {
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+}
+
+#inputDialog label span.btn.btn-file {
+  background-color: var(--ms-themePrimary);
+  color: #fff;
 }
 
 #inputDialog .dialog {
@@ -842,18 +856,33 @@ body #foreground #text .lds-roller {
   width: 100%;
 }
 
-#inputDialog #meta {
+#inputDialog #meta a {
   position: absolute;
-  bottom: 5px;
+  bottom: 0;
   left: 0;
   width: 100%;
+  padding-bottom: 5px;
   text-align: center;
   color: #8a8886;
   font-size: 10px;
+  -webkit-transition: all 300ms ease-in-out;
+  transition: all 300ms ease-in-out;
+}
+
+#inputDialog #meta a:hover {
+  text-decoration: none;
+  -webkit-transform: scale(1.03);
+          transform: scale(1.03);
+  color: #484644;
 }
 
 .container-fluid {
   padding: 0;
+}
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .doki-kaboom {
