@@ -1,36 +1,43 @@
 {
   "Missing Data": {
-    "options": "msd.R",
+    "id": "missing",
+    "options": "msd.render.R",
     "process": "msd.main.R",
     "result": "msd.result.R"
   },
   "Outliers": {
-    "options": "outl.R",
+    "id": "outliers",
+    "options": "outl.render.R",
     "process": "outl.main.R",
     "result": "outl.result.R"
   },
   "Loners": {
-    "options": "lnr.R",
+    "id": "loners",
+    "options": "lnr.render.R",
     "process": "lnr.main.R",
     "result": "lnr.result.R"
   },
   "Binaries": {
-    "options": "bin.R",
+    "id": "binary",
+    "options": "bin.render.R",
     "process": "bin.main.R",
     "result": "bin.result.R"
   },
   "White spaces": {
-    "options": "wsp.R",
+    "id": "whitespaces",
+    "options": "wsp.render.R",
     "process": "wsp.main.R",
     "result": "wsp.result.R"
   },
   "Spelling issues": {
-    "options": "spl.R",
+    "id": "spelling",
+    "options": "spl.render.R",
     "process": "spl.main.R",
     "result": "spl.result.R"
   },
   "Serial Data": {
-    "options": "srl.R",
+    "id": "serial",
+    "options": "srl.render.R",
     "process": "srl.main.R",
     "result": "srl.result.R"
   }

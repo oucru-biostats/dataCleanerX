@@ -1,5 +1,6 @@
 let navbar = $(document).find('#fullProgram .navbar');
 navbar.find('.container-fluid .navbar-header').append($('#inputBox'));
+// navbar.find('.navbar-brand').prepend('🤖 ');
 navbar.append('<div id="tab-underline"></div>');
 
 const navbarNav = $('#fullProgram .navbar .nav.navbar-nav');

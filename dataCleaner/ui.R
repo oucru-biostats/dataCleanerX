@@ -1,8 +1,9 @@
 shinyUI(
   fluidPage(
 
-    tags$title('🤖 Data-Clean Robot'),
+    tags$title('Data-Clean Robot'),
     tags$meta(name="viewport", content="width=device-width, initial-scale=1.0"),
+    tags$link(rel="icon",type="img/ico",href="img/favicon-robot.png"),
     tags$link(rel='stylesheet', href="styles.css"),
     # tags$link(rel='stylesheet', href="dialogs.css"),
     tags$link(rel='stylesheet', href="sidebar.css"),

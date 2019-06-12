@@ -7,13 +7,13 @@ methodList_build <-
     }
 
 method <- 
-    list('Missing Data'= list(options='msd.render.R', process = 'msd.main.R', result='msd.result.R'),
-    'Outliers'= list(options='outl.render.R', process = 'outl.main.R', result='outl.result.R'),
-    'Loners'= list(options='lnr.render.R', process = 'lnr.main.R', result='lnr.result.R'),
-    'Binaries'= list(options='bin.render.R', process = 'bin.main.R', result='bin.result.R'),
-    'White spaces'= list(options='wsp.render.R', process = 'wsp.main.R', result='wsp.result.R'),
-    'Spelling issues'= list(options='spl.render.R', process = 'spl.main.R', result='spl.result.R'),
-    'Serial Data'= list(options='srl.render.R', process = 'srl.main.R', result='srl.result.R')
+    list('Missing Data'= list(id='missing', options='msd.render.R', process = 'msd.main.R', result='msd.result.R'),
+    'Outliers'= list(id='outliers',options='outl.render.R', process = 'outl.main.R', result='outl.result.R'),
+    'Loners'= list(id='loners',options='lnr.render.R', process = 'lnr.main.R', result='lnr.result.R'),
+    'Binaries'= list(id='binary',options='bin.render.R', process = 'bin.main.R', result='bin.result.R'),
+    'White spaces'= list(id='whitespaces',options='wsp.render.R', process = 'wsp.main.R', result='wsp.result.R'),
+    'Spelling issues'= list(id='spelling',options='spl.render.R', process = 'spl.main.R', result='spl.result.R'),
+    'Serial Data'= list(id='serial',options='srl.render.R', process = 'srl.main.R', result='srl.result.R')
     )
 
 # write_json(method, 'meta.json', auto_unbox=TRUE, pretty=TRUE)
