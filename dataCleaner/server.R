@@ -107,43 +107,36 @@ shinyServer(function(session, input, output) {
   })
 
   observeEvent(dataset$data.table, {
+    
     session$sendCustomMessage('dokidoki', TRUE)
     dataset$colnames <- colnames(dataset$data.table)
     data.table <-
       cbind("<span style='color:grey; font-style:italic; font-weight:light'>(index)</span>" = 1:nrow(req(dataset$data.table)), dataset$data.table)
-    # output$DT <-
-    #   renderDT(
-    #     expr = data.table,
-    #     filter = list(position = 'top', caseInsensitive = FALSE),
-    #     escape = FALSE, 
-    #     server = TRUE,
-    #     selection = 'single',
-    #     rownames = FALSE,
-    #     options = list(
-    #       id = 'data-table',
-    #       # stateSave = TRUE,
-    #       search = list(caseInsensitive = FALSE),
-    #       pageLength = 5,
-    #       scrollY = 'auto',
-    #       scrollX = TRUE,
-    #       autoWidth = TRUE,
-    #       scroller = TRUE,
-    #       # drawCallback = JS("function() {_DT_callback(this);}"),
-    #       initComplete = JS("function() {
-    #         let dt = this;
-    #         import('/etc/lib.js').then((lib) => {
-    #           lib._DT_initComplete(dt);
-    #         });
-    #         show_full_ui()}")
-    #       )
-    #     )
     
-    output$DT <- ui_build$DT_build(data.table, initComplete = "function() {
-            let dt = this;
-            import('/etc/lib.js').then((lib) => {
-              lib._DT_initComplete(dt);
-            });
-            show_full_ui()}")
+    output$DT <- ui_build$DT_build(data.table, 
+                                   initComplete = "function() {
+                                      
+                                      let dt = this;
+                                      import('/etc/lib.js').then((lib) => {
+                                        lib._DT_initComplete(dt);
+                                      });
+                                      
+                                      show_full_ui();}",
+                                   drawCallback = "function(){
+                                    let $this=$(this);
+                                    $this.addClass('animate');
+                                    setTimeout(function(){$this.removeClass('animate')}, 500);
+                                   }")
+    
+    output$doChecks_simple <-
+      renderUI(
+        awesomeCheckboxGroup(inputId = 'doChecks',
+                             label = 'Do check for...',
+                             choices = names(methods$names),
+                             selected = names(methods$names),
+                             status = 'info',
+                             inline = TRUE)
+      )
   })
   
   output$dataOptions <-
@@ -179,7 +172,7 @@ shinyServer(function(session, input, output) {
                         )
                 ),
                 
-                tags$li(div('Show/Hide Columns', id = 'show-hide-columns'),
+                tags$li(div('Columns filter', id = 'show-hide-columns'),
                         tags$ul(
                           tags$li(
                             id = 'columns-chooser-holder',
@@ -210,14 +203,18 @@ shinyServer(function(session, input, output) {
     output$DT.filtered <- ui_build$DT_build(dataset$data.filtered)
   })
   
+  observeEvent(dataset$data.filtered, {
+    ui_build$navlistBuild(methods, input, output, data = dataset)
+  })
+  
   output$DT <- NULL
-
+  
   observeEvent(input$dataReady, {
       show_fullUI(TRUE)
   })
   
   observeEvent(input$sendHiddenMsg, {
-    sendSweetAlert(session, title = '', type = 'success', text = h1('KT  KL', style='text-align:center; margin-top:5px;color:crimson'), html=TRUE)
+    sendSweetAlert(session, title = '', type = 'success', text = h1('KT <3 KL', style='text-align:center; margin-top:5px;color:crimson'), html=TRUE)
   })
     
   observeEvent(show_fullUI(), {
@@ -281,11 +278,12 @@ shinyServer(function(session, input, output) {
         navbarPage(
           title = 'Data-Clean Robot',
           tabPanel('Quick Check',
-                   tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").append($(\'#DT\'));'),
+                   tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").prepend($(\'#DT\'));'),
                    uiOutput('dataOptions'),
+                   uiOutput('doChecks_simple'),
                    class = 'grand-tab'
           ),
-          tabPanel('Custom Profile',
+          tabPanel('Custom Profiles',
                    uiOutput('defTable'),
                    # rHandsontableOutput('defTable'),
                    class = 'grand-tab'
@@ -319,25 +317,37 @@ shinyServer(function(session, input, output) {
     )
   
   
-  # output$defTableHolder <-
-  #   renderUI(
-  #     rHandsontableOutput('defTable')
-  #   )
+  defTable.generate <- actionButton('defTable.generate', ui_build$ms_icon('Generate'), title = 'Auto generate profiles')
   
-    
-  observeEvent(dataset$data.table,{
+  observeEvent(dataset$data.table, {
     data <- dataset$data.table
     dataset$intelliType <- cleanify$intelliType(data, threshold = 0.8)
     dataset$data.keys <- cleanify$intelliKey(data, showAll = TRUE)
-    dataset$checks.compatible <- cleanify$intelliCompatible(data)
     
+    varName.holder <- factor(NULL, levels = sort(unique(dataset$colnames)))
+    type.holder <- factor(NULL, levels = c('numeric', 'character', 'dateTime', 'factor', '*'))
+    checks.holder <- factor(NULL, levels = names(methods$names))
+    dataset$defTable <- 
+      tibble(varName = varName.holder, 
+             type = type.holder, values = character(), checks = character(), subset = character(), rules = character()) %>% as.data.frame
+  })
+  
+  # defTable.workingDialog <- ui_build$workingDialog('Generating...')
+  output$workingDialog <- ui_build$workingDialog('Generating...')
+  
+  
+  observeEvent(input$defTable.generate,{
+    session$sendCustomMessage('show', '#workingDialog .working-dialog')
+    data <- dataset$data.table
+    dataset$checks.compatible <- cleanify$intelliCompatible(data)
+  
     type <- 
       sapply(seq_along(dataset$intelliType),
              function(i) {
                iType <- dataset$intelliType[[i]]
                cType <- sapply(dataset$colnames, function(col) class(data[[col]]), USE.NAMES = FALSE)
                out <- 
-                 if (is.null(iType)) '*'
+                 if (is.null(iType)) ''
                else if ('key' %in% iType) {
                  if ('numeric' %in% iType) 'numeric' else 'character'
                }
@@ -355,23 +365,17 @@ shinyServer(function(session, input, output) {
                                  all(as.numeric(na.omit(data[[i]])) == floor(as.numeric(na.omit(data[[i]])))) &
                                  all(as.numeric(na.omit(data[[i]])) <= 10))
                                'factor' 
+                           else if (all(as.numeric(na.omit(data[[i]])) == floor(as.numeric(na.omit(data[[i]]))))) 'integer'
                            else 'numeric',
                            'dateTime' = 'dateTime',
                            'binary' = 'factor')
                
-             }, USE.NAMES = FALSE)
-    #
-    # evels = c('numeric', 'character', 'factor', 'dateTime', '*'),
-    # labels = c('numeric', 'character', 'factor', 'dateTime', '*')
-    # ))
-    # levels = c('numeric', 'character', 'factor', 'dateTime', '*'),
-    # labels = c('numeric', 'character', 'factor', 'dateTime', '*')
-    # )
+             }, USE.NAMES = FALSE) %>% factor(., levels = c('numeric', 'integer', 'factor', 'character', 'dateTime', ''))
     values <- sapply(seq_along(type),
                      function(i) {
                        type = type[i]
                        
-                       if (type == 'numeric'){
+                       if (type %in% c('numeric', 'integer')){
                          min = min(as.numeric(na.omit(data[[i]])))
                          max = max(as.numeric(na.omit(data[[i]])))
                          if (isTRUE(min != max)) paste0('[', min, ', ', max, ']')
@@ -387,14 +391,6 @@ shinyServer(function(session, input, output) {
                        }
                      }, USE.NAMES = FALSE)
     
-    # dataset$availTestNames <- c('Missing Data', 'Outliers/Loners', 'Binary', 'Whitespaces', 'Spelling', 'Serial Data')
-    # availTests <- matrix(rep(FALSE, length(methods$names)*length(dataset$colnames)), ncol = length(methods$names))
-    # colnames(availTests) <- methods$names
-    # dataset$availTestNames <- c('whitespaces', 'doubleWSP', 'loners', 'binary', 'missing', 'spelling', 'case')
-    
-    # dataset$checks.lv <- structure(
-    #   c('Whitespaces', 'Outliers', 'Loners', 'Binary', 'Missing Data', 'Spelling', 'Serial Data',
-    #   names = c('whitespaces', 'outliers', 'loners', 'binary', 'missing', 'spelling', 'serial')))
     checks <-
       sapply(colnames(dataset$checks.compatible), 
              function(var){
@@ -403,29 +399,50 @@ shinyServer(function(session, input, output) {
                  factor(x = .,
                         levels = methods$names,
                         labels = names(methods$names)
-                 ) %>% as.character
-             }
+                 ) %>% as.character 
+               # %>% append(c(sep=', ')) %>% as.list %>% do.call(paste, .)
+             },
+             simplify = FALSE
       )
     
+    
     dataset$defTable <- 
-      tibble(varName = as.factor(dataset$colnames), type = as.factor(type), values = values, checks = checks, subset = '') %>% as.data.frame()
+      tibble(varName = as.factor(dataset$colnames), type = factor(type), values = values, checks = checks, subset = '', rules = '') %>% as.data.frame()
+    
     row.names(dataset$defTable) <- NULL
+      
+    NULL
+  })
+  
+  observeEvent(input$defTable.generate, {
+    ui_build$updateData(dataset$defTable.proxy, dataset$defTable, 
+                rownames = FALSE)
+    dataset$dt.result$thedata <- dataset$defTable
+    NULL
   })
   
   observeEvent(dataset$data.table, {
     #  # req(dataset$defTable)
+    dataset$dt.result <- 
     ui_build$dtedit(input, output,
                     name = 'defTable',
-                    thedata = isolate(dataset$defTable),
-                    edit.cols = c('varName', 'type', 'values', 'checks', 'subset'),
-                    edit.label.cols = c('Variables', 'Data Type', 'Accepted Values', 'Do checks for...', '...where'),
-                    input.types = c(type = 'selectInput'),
-                    input.choices = list(checks = names(methods$names), 
-                                         type = c('numeric', 'character', 'dateTime', 'factor')), 
-                    title.add = 'New check profile',
-                    title.edit = 'Edit check profile',
-                    title.delete = 'Delete check profile',
-                    label.copy = 'Duplicate',
+                    thedata = dataset$defTable,
+                    edit.cols = c('varName', 'type', 'values', 'checks', 'subset', 'rules'),
+                    edit.label.cols = c('Variables', 'Data Type', 'Accepted Values', 'Do checks for...', '...where', 'Other rules'),
+                    input.types = list(
+                      values = 'textInput',
+                      checks = 'selectInputMultiple', 
+                      type = 'selectInput',
+                      subset = 'textInput',
+                      rules = 'textInput'),
+                    input.choices = list(
+                      checks = names(methods$names), 
+                      type = c('numeric', 'integer', 'character', 'dateTime', 'factor')), 
+                    title.add = 'New check profile', label.add = ui_build$ms_icon('Add'),
+                    title.edit = 'Edit check profile', class.edit = 'btn-disabled', label.edit = ui_build$ms_icon('Edit'),
+                    title.delete = 'Delete check profile', class.delete = 'btn-disabled', label.delete = ui_build$ms_icon('Remove'),
+                    title.copy = 'Clone this profile', class.copy = 'btn-disabled', label.copy = ui_build$ms_icon('Copy'),
+                    additional.control = defTable.generate,
                     callback.update = defTable.update.callback,
                     callback.insert = defTable.insert.callback,
                     callback.delete = defTable.delete.callback,
@@ -433,41 +450,47 @@ shinyServer(function(session, input, output) {
                       id = 'def-table',
                       class = 'bq-data-table',
                       paging = FALSE,
-                      scrollY = 'auto',
+                      scrollY = 'fit-content',
                       scrollX = TRUE,
                       scroller = TRUE,
-                      autoWidth = TRUE,
+                      autoWidth = FALSE,
                       columnDefs = list(list(width = '30%', targets = c(3, 4))),
-                      initComplete = JS(
+                      fixedHeader = TRUE,
+                      drawCallback = JS(
                         'function(){
                           /*$(\'<div id = "defTable-edit-control"></div>\')
                           .insertBefore(\'#defTabledt\')
                           .append($("#defTable_add"))
                           .append($("#defTable_edit"))
                           .append($("#defTable_remove"))
-                          .append($("#defTable_copy"));*/
+                          .append($("#defTable_copy"));
                           
                           $(\'#defTable #defTable_edit\').addClass(\'btn-disabled\');
                           $(\'#defTable #defTable_remove\').addClass(\'btn-disabled\');
-                          $(\'#defTable #defTable_copy\').addClass(\'btn-disabled\');
+                          $(\'#defTable #defTable_copy\').addClass(\'btn-disabled\');*/
+                          
+                          
+                          $("#workingDialog .working-dialog").slideUp();
                         }')
                     ),
-                    colnames = c('Variables' = 'varName', 'Type' = 'type', 'Accepted Values' = 'values', 'Do check for...' = 'checks', '...where' = 'subset')
+                    colnames = c('Variables' = 'varName', 'Type' = 'type', 'Accepted Values' = 'values', 'Do check for...' = 'checks', '...where' = 'subset', 'Additional rules' = 'rules')
     )
   })
-
-  observeEvent(dataset$defTable, {
-    dataset$defTable.edited <- dataset$defTable
-  })
   
+  # observeEvent(dataset$defTable, {
+  #   dataset$defTable.edited <- dataset$defTable
+  # })
+  
+  dataset$defTable.proxy <- DT::dataTableProxy('defTabledt')
   
   defTable.insert.callback <- function(data, row) {
-    dataset$defTable <- rbind(data, dataset$defTable)
+    # dataset$defTable <- rbind(data, dataset$defTable)
+    dataset$defTable <- data
     return(dataset$defTable)
   }
   
   defTable.update.callback <- function(data, olddata, row) {
-    dataset$defTable[row,] <- data[1,]
+    dataset$defTable[row,] <- data[row,]
     return(dataset$defTable)
   }
   
@@ -492,23 +515,9 @@ shinyServer(function(session, input, output) {
     else session$sendCustomMessage('reloadRequest-ans', FALSE)
   })
 
-  # output$defTable <- renderRHandsontable(
-  #   rhandsontable(req(dataset$defTable), stretchH = "all", search = TRUE) %>%
-  #     hot_cols(colWidths = c('','', '120px', '100px', '')) %>%
-  #     hot_rows(rowHeights = rep('24px', 5)) %>%
-  #     hot_col(col = 'varName', readOnly = TRUE) %>%
-  #     hot_col(col = 'type', type = 'dropdown', source = c('numeric', 'character', 'dateTime', 'factor'), allowInvalid = FALSE) %>%
-  #     hot_col(col = 'values', placeholder = '{a, b, c} or [min, max]') %>%
-  #     hot_col(col = 'rules', placeholder = '=') %>%
-  #     (function(tab) {
-  #       for (test in methods$names) {
-  #         tab <- hot_col(tab, col = test, type='checkbox')
-  #       }
-  #       tab
-  #     })
-  # )
   
-  output$checkUI <- renderUI(ui_build$navlistBuild(names(methods$names))) 
+  # output$checkUI <- renderUI(ui_build$navlistBuild(methods)) 
+  
   
   misc$set_always_on(
     c('inputBox', 'DT', 'fullProgram'),

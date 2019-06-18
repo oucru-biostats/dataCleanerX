@@ -633,7 +633,7 @@ body #foreground #text .lds-roller {
 }
 
 #checkUI-holder::before {
-  content: 'Check Options';
+  content: 'Checks Configuration';
 }
 
 #checkUI-holder #checkUI .nav > li > a {
@@ -643,7 +643,7 @@ body #foreground #text .lds-roller {
   border-left: 2px solid transparent;
   -webkit-transition: all 300ms ease-in-out;
   transition: all 300ms ease-in-out;
-  font-size: 13px;
+  font-size: 12.5px;
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
@@ -661,21 +661,44 @@ body #foreground #text .lds-roller {
   background-color: unset;
 }
 
+#checkUI-holder #checkUI .tab-content .arg-holder {
+  float: left;
+  width: 75%;
+  height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+#checkUI-holder #checkUI .tab-content .instr-holder {
+  float: left;
+  width: 25%;
+  height: 300px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+#checkUI-holder #checkUI .tab-content .tab-pane.active > div {
+  -webkit-animation: ms-motion-slideUpIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+          animation: ms-motion-slideUpIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+  -webkit-animation-duration: 300ms;
+          animation-duration: 300ms;
+}
+
 #dataOptions {
   float: left;
   z-index: 100001;
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 0px;
+  height: 0px;
   margin-top: -3px;
 }
 
 #dataOptions #datasetMenu {
-  display: block;
+  display: none;
   padding: 0 0 0 10px;
   border: none;
   background-color: transparent;
-  color: var(--color-inactive);
+  color: #8a8886;
   transition: 0.3s all ease;
   -webkit-transition: 0.3s all ease;
   -moz-transition: 0.3s all ease;
@@ -684,7 +707,7 @@ body #foreground #text .lds-roller {
 }
 
 #dataOptions #datasetMenu:hover {
-  color: var(--color-active);
+  color: #106ebe;
 }
 
 #dataOptions #datasetMenu:active {
@@ -692,7 +715,7 @@ body #foreground #text .lds-roller {
           box-shadow: none;
   border: none;
   outline: none;
-  color: var(--color-active);
+  color: #106ebe;
 }
 
 #dataOptions #datasetMenu span {
@@ -701,6 +724,18 @@ body #foreground #text .lds-roller {
 
 #dataOptions #datasetMenu i {
   font-size: 20px;
+  -webkit-animation-duration: 400ms;
+          animation-duration: 400ms;
+}
+
+[dir='ltr'] #dataOptions #datasetMenu i {
+  -webkit-animation: ms-motion-slideRightIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+          animation: ms-motion-slideRightIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+}
+
+[dir='rtl'] #dataOptions #datasetMenu i {
+  -webkit-animation: ms-motion-slideLeftIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+          animation: ms-motion-slideLeftIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
 }
 
 #dataOptions #dropdown-menu-datasetMenu {
@@ -755,7 +790,7 @@ body #foreground #text .lds-roller {
 
 #dataOptions #dropdown-menu-datasetMenu ul#dataset-menu li.disabled {
   pointer-events: none;
-  color: #edebe9;
+  color: #d2d0ce;
   font-style: italic;
 }
 
@@ -814,7 +849,7 @@ body #foreground #text .lds-roller {
 }
 
 #dataOptions #columns-chooser-holder .awesome-checkbox-menu, #dataOptions #key-var-chooser-holder .awesome-checkbox-menu {
-  padding: 0px 0px 7px 7px !important;
+  padding: 0px 0px 10px 7px !important;
   max-height: 70vh;
   overflow-y: auto;
   -webkit-box-sizing: border-box;
@@ -986,12 +1021,27 @@ body #foreground #text .lds-roller {
 }
 
 #DT .dataTable, #DT .dataTable .dataTable thead th, #DT .dataTable .dataTable thead td, #defTable .dataTable, #defTable .dataTable .dataTable thead th, #defTable .dataTable .dataTable thead td {
-  border-bottom-color: #adabab;
+  white-space: nowrap;
+  border-bottom-color: #edebe9;
 }
 
-#DT .dataTable tr, #defTable .dataTable tr {
+#DT .dataTable.animate, #defTable .dataTable.animate {
+  overflow: hidden;
+}
+
+#DT .dataTable.animate tr, #defTable .dataTable.animate tr {
   -webkit-animation-duration: 500ms !important;
           animation-duration: 500ms !important;
+}
+
+[dir='ltr'] #DT .dataTable.animate tr, [dir='ltr'] #defTable .dataTable.animate tr {
+  -webkit-animation: ms-motion-slideLeftIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+          animation: ms-motion-slideLeftIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+}
+
+[dir='rtl'] #DT .dataTable.animate tr, [dir='rtl'] #defTable .dataTable.animate tr {
+  -webkit-animation: ms-motion-slideRightIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+          animation: ms-motion-slideRightIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
 }
 
 #DT .dataTable td, #defTable .dataTable td {
@@ -1033,7 +1083,6 @@ body #foreground #text .lds-roller {
 
 #DT .form-control, #defTable .form-control {
   height: 30px;
-  background-color: transparent;
   -webkit-box-shadow: 0 0 0 transparent;
           box-shadow: 0 0 0 transparent;
   overflow-x: visible;
@@ -1086,6 +1135,14 @@ body #foreground #text .lds-roller {
   border-color: transparent;
 }
 
+#DT .dataTables_scrollBody {
+  max-height: calc(100vh - 380px);
+}
+
+#defTable .dataTables_scrollBody {
+  max-height: calc(100vh - 220px);
+}
+
 #defTable > div > br {
   display: none;
 }
@@ -1100,11 +1157,10 @@ body #foreground #text .lds-roller {
 #defTable .control-buttons button {
   margin-left: 5px;
   border-radius: 4px;
-  border-color: #faf9f8;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
-  background-color: #edebe9;
-  border-color: #edebe9;
+  background-color: #f3f2f1;
+  border-color: #f3f2f1;
   outline: none;
 }
 
@@ -1176,6 +1232,10 @@ body #foreground #text .lds-roller {
           box-shadow: 0px 1px 2px var(--color-inactive);
 }
 
+#fullProgram #doChecks_simple {
+  padding: 0 10px;
+}
+
 #fullProgram .navbar {
   -webkit-animation: ms-motion-slideDownIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
           animation: ms-motion-slideDownIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
@@ -1183,8 +1243,17 @@ body #foreground #text .lds-roller {
           animation-duration: 500ms;
   -webkit-animation-delay: 200ms;
           animation-delay: 200ms;
-  background-color: transparent;
+  background-color: #f3f2f1;
   border-color: transparent;
+  position: sticky;
+  position: -webkit-sticky;
+}
+
+@supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
+  #fullProgram .navbar {
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+  }
 }
 
 #fullProgram .navbar .navbar-header {
@@ -1536,5 +1605,62 @@ body #foreground #text .lds-roller {
 .modal-content .modal-footer .btn:last-child:hover {
   background-color: #106ebe;
   border-color: #106ebe;
+}
+
+.working-dialog {
+  position: fixed;
+  display: none;
+  z-index: 100000;
+  -webkit-box-shadow: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.22), 0 4.8px 14.4px 0 rgba(0, 0, 0, 0.18);
+          box-shadow: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.22), 0 4.8px 14.4px 0 rgba(0, 0, 0, 0.18);
+  -webkit-animation: ms-motion-slideDownIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+          animation: ms-motion-slideDownIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
+  -webkit-animation-duration: 400ms;
+          animation-duration: 400ms;
+  background: #fff;
+  top: calc(50vh - 100px);
+  left: calc(50vw - 200px);
+  width: 300px;
+  height: 100px;
+  padding: 20px;
+  border-radius: 4px;
+}
+
+@supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
+  .working-dialog {
+    background: rbga(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+  }
+}
+
+.working-dialog p {
+  text-align: justify;
+  font-size: 12px;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.working-dialog .marquee-background {
+  width: 100%;
+  height: 3px;
+  padding: 0;
+  border: none;
+  outline: none;
+  background-color: #f3f2f1;
+  overflow: hidden;
+  position: relative;
+}
+
+.working-dialog .marquee-background .marquee {
+  width: 10%;
+  height: 3px;
+  background-color: #0b6a0b;
+  -webkit-animation: marquee 2s linear infinite;
+          animation: marquee 2s linear infinite;
+  position: absolute;
 }
 /*# sourceMappingURL=styles.css.map */

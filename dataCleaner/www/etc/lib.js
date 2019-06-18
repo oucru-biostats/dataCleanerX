@@ -136,6 +136,7 @@ export const _DT_initComplete = function(dt) {
     // let DT_table = dt;  
     // shadowPlunge('#inputDialog .dialog');
     // $('#DT').attr('dir', 'ltr');
+    
     doki_kaboom('#inputDialog .dialog');
     $('#data-table .dataTables_scroll .simplebar-content').scroll(function(){
     let left = $('#data-table .dataTables_scrollBody .simplebar-content').scrollLeft();

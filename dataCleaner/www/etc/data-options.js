@@ -1,8 +1,11 @@
 
+$('#dataOptions')
+.insertBefore('#DT .dataTables_length')
+.css('width','30px').css('height', '30px')
+.find('#datasetMenu').show();
 $("#dataset-menu").menu({
     position: { my: "left top", at: "right-50 top-5" }
 });
-$('#dataOptions').insertBefore('#DT .dataTables_length');
 
 $("#output-holder").addClass("hidden"); 
 $('#shownColumns').addClass('awesome-checkbox-menu');

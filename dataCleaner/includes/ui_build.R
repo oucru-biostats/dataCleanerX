@@ -1,9 +1,28 @@
-navlistBuild <- function(methods, well=FALSE, widths=c(2, 10)){
-    names(methods) <- NULL
+navlistBuild <- function(methods, input, output, data = dataset, well=FALSE, widths=c(2, 10)){
+
     navlistPanel.custom <- function(...) navlistPanel(..., well=well, widths=widths)
-    do.call(navlistPanel.custom, lapply(methods, function(method){
-        tabPanel(method, uiOutput(method))
-    }))
+    
+    sapply(names(methods$names), function(method){
+        method.id <- methods$names[[method]]
+        
+        tryCatch({
+            options.ui <- source(paste0('includes/methods/',methods$meta[[method]]$render), local=TRUE)[[1]]
+            intr.ui <- methods$meta[[method]]$instruction
+            output[[method.id]] <- renderUI(list(div(options.ui, class='arg-holder'), 
+                                                 div(HTML(intr.ui), class='instr-holder')))
+        },error = function(e){
+            output[[method.id]] <- renderUI(p(toString(e)))
+        })
+    })
+    
+    output[['checkUI']] <- renderUI(do.call(navlistPanel.custom, 
+                                            lapply(names(methods$names), 
+                                                   function(method){
+                                                       tabPanel(method, uiOutput(methods$names[[method]]))}
+                                                   )
+                                            )
+                                    )
+    return(NULL)
 }
 
 AppInfo <- read_json(path='AppInfo.json')
@@ -20,7 +39,7 @@ checkInstr_build <- function(check){
     return(renderUI(div(out, id=paste(check, '-instr-holder'))))
 }
 
-checkResult_build <- function(check){
+check.result_build <- function(check){
     out <- source(paste0())
 }
 
@@ -37,8 +56,8 @@ DT_build <- function(expr, initComplete = NULL, drawCallback = NULL, ...){
         options = list(
             id = 'data-table',
             search = list(caseInsensitive = FALSE),
-            pageLength = 10,
-            scrollY = 'auto',
+            pageLength = 15,
+            scrollY = 'fit-content',
             scrollX = TRUE,
             # autoWidth = TRUE,
             scroller = TRUE,
@@ -54,10 +73,12 @@ dtedit <-
               input.types, input.choices = NULL, selectize = TRUE, modal.size = "m", 
               text.width = "100%", textarea.width = "570px", textarea.height = "200px", 
               date.width = "100px", numeric.width = "100px", select.width = "100%", 
-              defaultPageLength = 10, title.delete = "Delete", title.edit = "Edit", 
+              defaultPageLength = 10, title.delete = "Delete", title.edit = "Edit", title.copy = "Copy",
               title.add = "New", label.delete = "Delete", label.edit = "Edit", 
               label.add = "New", label.copy = "Copy", show.delete = TRUE, 
               show.update = TRUE, show.insert = TRUE, show.copy = TRUE, 
+              class.add = NULL, class.delete = NULL, class.edit = NULL, class.copy = NULL,
+              additional.control= NULL, additional.control.endPos = TRUE,
               callback.delete = function(data, row) {
               }, callback.update = function(data, olddata, row) {
               }, callback.insert = function(data, row) {
@@ -76,10 +97,10 @@ dtedit <-
             stop("Not all edit.cols are in the data.")
         }
         DataTableName <- paste0(name, "dt")
-        result <- shiny::reactiveValues()
-        result$thedata <- thedata
-        result$view.cols <- view.cols
-        result$edit.cols <- edit.cols
+        dt.result <- shiny::reactiveValues()
+        dt.result$thedata <- thedata
+        dt.result$view.cols <- view.cols
+        dt.result$edit.cols <- edit.cols
         dt.proxy <- DT::dataTableProxy(DataTableName)
         selectInputMultiple <- function(...) {
             shiny::selectInput(multiple = TRUE, selectize = selectize, 
@@ -143,7 +164,7 @@ dtedit <-
                             choices <- input.choices[[edit.cols[i]]]
                         }
                     }
-                    if (length(choices) == 1 & choices == "") {
+                    if (length(choices) == 1) if (choices == "") {
                         warning(paste0("No choices available for ", 
                                        edit.cols[i], ". Specify them using the input.choices parameter"))
                     }
@@ -156,7 +177,7 @@ dtedit <-
                                                                              edit.cols[i]]))
                     fields[[i]] <- shiny::selectInput(paste0(name, 
                                                              typeName, edit.cols[i]), label = edit.label.cols[i], 
-                                                      choices = levels(result$thedata[, edit.cols[i]]), 
+                                                      choices = if (!edit.cols[i] %in% names(input.choices)) levels(dt.result$thedata[, edit.cols[i]]) else input.choices[[edit.cols[i]]], 
                                                       selected = value, width = select.width)
                 }
                 else if (inputTypes[i] == "numericInput") {
@@ -221,7 +242,7 @@ dtedit <-
                 }
             }
             insert.click <<- Sys.time()
-            newdata <- result$thedata
+            newdata <- dt.result$thedata
             row <- nrow(newdata) + 1
             newdata[row, ] <- NA
             for (i in edit.cols) {
@@ -238,12 +259,12 @@ dtedit <-
                 callback.data <- callback.insert(data = newdata, 
                                                  row = row)
                 if (!is.null(callback.data) & is.data.frame(callback.data)) {
-                    result$thedata <- callback.data
+                    dt.result$thedata <- callback.data
                 }
                 else {
-                    result$thedata <- newdata
+                    dt.result$thedata <- newdata
                 }
-                updateData(dt.proxy, result$thedata[, view.cols], 
+                updateData(dt.proxy, dt.result$thedata[, view.cols], 
                            rownames = FALSE)
                 shiny::removeModal()
                 return(TRUE)
@@ -264,7 +285,7 @@ dtedit <-
             row <- input[[paste0(name, "dt_rows_selected")]]
             if (!is.null(row)) {
                 if (row > 0) {
-                    shiny::showModal(addModal(values = result$thedata[row, 
+                    shiny::showModal(addModal(values = dt.result$thedata[row, 
                                                                       ]))
                 }
             }
@@ -292,7 +313,7 @@ dtedit <-
             row <- input[[paste0(name, "dt_rows_selected")]]
             if (!is.null(row)) {
                 if (row > 0) {
-                    newdata <- result$thedata
+                    newdata <- dt.result$thedata
                     for (i in edit.cols) {
                         if (inputTypes[i] %in% c("selectInputMultiple")) {
                             newdata[[i]][row] <- list(input[[paste0(name, 
@@ -305,14 +326,14 @@ dtedit <-
                     }
                     tryCatch({
                         callback.data <- callback.update(data = newdata, 
-                                                         olddata = result$thedata, row = row)
+                                                         olddata = dt.result$thedata, row = row)
                         if (!is.null(callback.data) & is.data.frame(callback.data)) {
-                            result$thedata <- callback.data
+                            dt.result$thedata <- callback.data
                         }
                         else {
-                            result$thedata <- newdata
+                            dt.result$thedata <- newdata
                         }
-                        updateData(dt.proxy, result$thedata[, view.cols], 
+                        updateData(dt.proxy, dt.result$thedata[, view.cols], 
                                    rownames = FALSE)
                         shiny::removeModal()
                         return(TRUE)
@@ -326,7 +347,7 @@ dtedit <-
         })
         editModal <- function(row) {
             output[[paste0(name, "_message")]] <- renderText("")
-            fields <- getFields("_edit_", values = result$thedata[row, 
+            fields <- getFields("_edit_", values = dt.result$thedata[row, 
                                                                   ])
             shiny::modalDialog(title = title.edit, shiny::div(shiny::textOutput(paste0(name, 
                                                                                        "_message")), style = "color:red"), fields, footer = column(shiny::modalButton("Cancel"), 
@@ -345,15 +366,15 @@ dtedit <-
             row <- input[[paste0(name, "dt_rows_selected")]]
             if (!is.null(row)) {
                 if (row > 0) {
-                    newdata <- callback.delete(data = result$thedata, 
+                    newdata <- callback.delete(data = dt.result$thedata, 
                                                row = row)
                     if (!is.null(newdata) & is.data.frame(newdata)) {
-                        result$thedata <- newdata
+                        dt.result$thedata <- newdata
                     }
                     else {
-                        result$thedata <- result$thedata[-row, ]
+                        dt.result$thedata <- dt.result$thedata[-row, ]
                     }
-                    updateData(dt.proxy, result$thedata[, view.cols], 
+                    updateData(dt.proxy, dt.result$thedata[, view.cols], 
                                rownames = FALSE)
                     shiny::removeModal()
                     return(TRUE)
@@ -364,7 +385,7 @@ dtedit <-
         deleteModal <- function(row) {
             fields <- list()
             for (i in view.cols) {
-                fields[[i]] <- div(paste0(i, " = ", result$thedata[row, 
+                fields[[i]] <- div(paste0(i, " = ", dt.result$thedata[row, 
                                                                    i]))
             }
             shiny::modalDialog(title = title.delete, shiny::p("Are you sure you want to delete this record?"), 
@@ -375,19 +396,44 @@ dtedit <-
         output[[name]] <- shiny::renderUI({
             shiny::div(
                 shiny::div(class='control-buttons',
+                           if (!additional.control.endPos) additional.control,
                            if (show.insert) {
-                               shiny::actionButton(paste0(name, "_add"), label.add)
+                               shiny::actionButton(paste0(name, "_add"), label.add, class = class.add, title = title.add)
                            }, if (show.update) {
-                               shiny::actionButton(paste0(name, "_edit"), label.edit)
+                               shiny::actionButton(paste0(name, "_edit"), label.edit, class = class.edit, title = title.edit)
                            }, if (show.delete) {
-                               shiny::actionButton(paste0(name, "_remove"), label.delete)
+                               shiny::actionButton(paste0(name, "_remove"), label.delete, class = class.delete, title = title.delete)
                            }, if (show.copy) {
-                               shiny::actionButton(paste0(name, "_copy"), label.copy)
-                           }
+                               shiny::actionButton(paste0(name, "_copy"), label.copy, class = class.copy, title = title.copy)
+                           }, if (additional.control.endPos) additional.control
                 )
-                , DT::dataTableOutput(DataTableName)
+                , DT::DTOutput(DataTableName)
             )
         })
-        return(result)
+        return(dt.result)
     }
 
+ms_icon <- function(icon.id){
+    class = paste0('ms-Icon ms-Icon--', icon.id)
+    shiny::tags$i(class=class, 'aria-hidden'="true")
+}
+
+updateData <- function(proxy, data, ...) {
+    for (i in 1:ncol(data)) {
+        if (is.list(data[, i])) {
+            data[, i] <- sapply(data[, i], FUN = function(x) {
+                paste0(x, collapse = ", ")
+            })
+        }
+    }
+    DT::replaceData(proxy, data, ...)
+}
+
+workingDialog <- function(message){
+    renderUI(
+        div(class = 'float working-dialog',
+            p(message),
+            div(class = 'marquee-background',
+                div(class = 'marquee')))
+    )
+}

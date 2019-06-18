@@ -2,9 +2,11 @@ import * as lib from './etc/lib.js';
 let DT_table;
 let lv = 0;
 
+
 const _DT_initComplete = function(dt) {
     return(lib._DT_initComplete(dt));
 }
+
 $(document).ready(() => {
     $('body').addClass('ms-Fabric').attr('dir', 'ltr');
     
@@ -59,4 +61,13 @@ Shiny.addCustomMessageHandler('reloadRequest-ans', mess => {
     if (mess) history.go(0);
      else Shiny.setInputValue('reloadRequest', false);
 });
+
+Shiny.addCustomMessageHandler('set-input-value', mess => {
+    console.log(mess);
+   Shiny.setInputValue(mess.input, mess.value);
+});
+
+Shiny.addCustomMessageHandler('show', el => {
+    $(el).show();
+})
 

@@ -25,7 +25,7 @@ shinyUI(
     div(id='header'),
     uiOutput('sidebar'),
     uiOutput('body'),
-    uiOutput('floatbar'),
+    uiOutput('workingDialog'),
     uiOutput('floatwindow'),
     uiOutput('tmp')
   )

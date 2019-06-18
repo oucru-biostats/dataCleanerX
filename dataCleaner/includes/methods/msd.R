@@ -1,12 +1,12 @@
-list(awesomeCheckboxGroup(inputId = "msd_subset", 
-                          label = "Select variables to check", 
-                          choices = dataset$colnames[dataset$colnames %in% names(which(intelliCompatible(isolate(dataset$data.table), "missing")))], 
-                          selected = dataset$colnames[dataset$colnames %in% names(which(intelliCompatible(isolate(dataset$data.table), "missing")))], 
-                          inline = TRUE, status = "info"),
-     materialSwitch(inputId = "msd_fix", 
-                    label = "Auto replace suspect with NA", 
-                    status = "danger",
-                    value = FALSE,
-                    right = TRUE)
-)
-
+# i <- get_input_vars(input, 'msd')
+# keyVar <- input$keyVariable
+# data <- dataset$data.loaded
+# 
+# chkRes$msd_result <- 
+#   future(
+#     test_apply(c(i$msd_enabled, length(i$msd_subset)),
+#                missing_scan,
+#                data = data, keyVar = i$keyVariable,
+#                subset = i$msd_subset, fix = i$msd_fix
+#     )
+#   ) 

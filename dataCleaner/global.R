@@ -5,7 +5,7 @@ library(shinyWidgets)
 library(shinyjs)
 library(tidyverse)
 library(DT)
-library(DTedit)
+# library(DTedits) #folked, not load
 library(rhandsontable)
 library(readxl)
 library(dataMaid)
