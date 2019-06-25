@@ -43,9 +43,11 @@ shinyServer(function(session, input, output) {
             choices = dataset$sheetsList,
             options = pickerOptions(
               title = '(Select one)',
+              dropupAuto = FALSE,
               dropdownAlignRight = TRUE,
               liveSearch = TRUE,
-              mobile = FALSE
+              mobile = FALSE,
+              size = 7
               )
           )         
         )
@@ -125,18 +127,19 @@ shinyServer(function(session, input, output) {
                                    drawCallback = "function(){
                                     let $this=$(this);
                                     $this.addClass('animate');
+                                    import('/etc/lib.js').then(lib => lib._DT_callback($this));
                                     setTimeout(function(){$this.removeClass('animate')}, 500);
                                    }")
     
-    output$doChecks_simple <-
-      renderUI(
-        awesomeCheckboxGroup(inputId = 'doChecks',
-                             label = 'Do check for...',
-                             choices = names(methods$names),
-                             selected = names(methods$names),
-                             status = 'info',
-                             inline = TRUE)
-      )
+    # output$doChecks_simple <-
+    #   renderUI(
+    #     awesomeCheckboxGroup(inputId = 'doChecks',
+    #                          label = 'Do check for...',
+    #                          choices = names(methods$names),
+    #                          selected = names(methods$names),
+    #                          status = 'info',
+    #                          inline = TRUE)
+    #   )
   })
   
   output$dataOptions <-
@@ -152,7 +155,7 @@ shinyServer(function(session, input, output) {
         width = 'auto',
         tags$ul(id = 'dataset-menu',
                 tags$li(class = if (!length(dataset$data.keys)) 'disabled',
-                        div('Set key variable', id = 'set-key-var'),
+                        div('Set Key', id = 'set-key-var'),
                         tags$ul(
                           tags$li(
                             id = 'key-var-chooser-holder',
@@ -172,6 +175,27 @@ shinyServer(function(session, input, output) {
                         )
                 ),
                 
+                tags$li(class = if (!length(dataset$data.IDs)) 'disabled',
+                        div('Set subject ID', id = 'set-id-var'),
+                        tags$ul(
+                          tags$li(
+                            id = 'id-var-chooser-holder',
+                            div(
+                              if (length(dataset$data.IDs))
+                                awesomeRadio(inputId = 'idVariable',
+                                             label = NULL,
+                                             status = 'primary',
+                                             choices = dataset$data.IDs,
+                                             selected = dataset$data.IDs[1],
+                                             width = 'auto'
+                                ) else p('(Empty)'),
+                              id = 'id-var-chooser',
+                              class = 'awesome-checkbox-chooser'
+                            )
+                          )
+                        )
+                ),
+                
                 tags$li(div('Columns filter', id = 'show-hide-columns'),
                         tags$ul(
                           tags$li(
@@ -179,12 +203,31 @@ shinyServer(function(session, input, output) {
                             div(
                               awesomeCheckboxGroup(inputId = 'shownColumns',
                                                    label = NULL,
-                                                   status = 'columns-list',
+                                                   status = 'choose-list',
                                                    choices = dataset$colnames,
                                                    selected = dataset$colnames,
                                                    width = 'auto'
                               ),
                               id = 'columns-chooser',
+                              class = 'awesome-checkbox-chooser'
+                            )
+                          )
+                        )
+                ),
+                
+                tags$li(div('Do checks for...', id = 'check-enable'),
+                        tags$ul(
+                          tags$li(
+                            id = 'checks-chooser-holder',
+                            div(
+                              awesomeCheckboxGroup(inputId = 'checksEnabled',
+                                                   label = NULL,
+                                                   status = 'choose-list',
+                                                   choices = names(methods$names),
+                                                   selected = names(methods$names),
+                                                   width = 'auto'
+                              ),
+                              id = 'checks-chooser',
                               class = 'awesome-checkbox-chooser'
                             )
                           )
@@ -278,9 +321,9 @@ shinyServer(function(session, input, output) {
         navbarPage(
           title = 'Data-Clean Robot',
           tabPanel('Quick Check',
-                   tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").prepend($(\'#DT\'));'),
+                   tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").append($(\'#DT\'));'),
                    uiOutput('dataOptions'),
-                   uiOutput('doChecks_simple'),
+                   # uiOutput('doChecks_simple'),
                    class = 'grand-tab'
           ),
           tabPanel('Custom Profiles',
@@ -322,14 +365,59 @@ shinyServer(function(session, input, output) {
   observeEvent(dataset$data.table, {
     data <- dataset$data.table
     dataset$intelliType <- cleanify$intelliType(data, threshold = 0.8)
+    dataset$intelliType.strict <- cleanify$intelliType(data, threshold = 1)
     dataset$data.keys <- cleanify$intelliKey(data, showAll = TRUE)
+    dataset$data.IDs <- cleanify$intelliID(data, showAll = TRUE)
     
-    varName.holder <- factor(NULL, levels = sort(unique(dataset$colnames)))
+    # varName.holder <- factor(NULL, levels = sort(unique(dataset$colnames)))
     type.holder <- factor(NULL, levels = c('numeric', 'character', 'dateTime', 'factor', '*'))
     checks.holder <- factor(NULL, levels = names(methods$names))
     dataset$defTable <- 
-      tibble(varName = varName.holder, 
+      tibble(varName = character(), 
              type = type.holder, values = character(), checks = character(), subset = character(), rules = character()) %>% as.data.frame
+    dataset$dt.result <- 
+      ui_build$dtedit(input, output,
+                      name = 'defTable',
+                      thedata = dataset$defTable,
+                      edit.cols = c('varName', 'type', 'values', 'checks', 'subset', 'rules'),
+                      edit.label.cols = c('Variables', 'Data Type', 'Accepted Values', 'Do checks for...', '...where', 'Other rules'),
+                      input.types = list(
+                        varName = 'selectInputMultiple',
+                        values = 'textInput',
+                        checks = 'selectInputMultiple', 
+                        type = 'selectInput',
+                        subset = 'textInput',
+                        rules = 'textInput'),
+                      input.choices = list(
+                        varName = dataset$colnames,
+                        checks = names(methods$names)[names(methods$names) != 'Pair Incorrespondence'], 
+                        type = c('numeric', 'integer', 'character', 'dateTime', 'factor', 'id')), 
+                      title.add = 'New check profile', label.add = ui_build$ms_icon('Add'),
+                      title.edit = 'Edit check profile', class.edit = 'btn-disabled', label.edit = ui_build$ms_icon('Edit'),
+                      title.delete = 'Delete check profile', class.delete = 'btn-disabled', label.delete = ui_build$ms_icon('Remove'),
+                      title.copy = 'Clone this profile', class.copy = 'btn-disabled', label.copy = ui_build$ms_icon('Copy'),
+                      additional.control = defTable.generate,
+                      callback.update = defTable.update.callback,
+                      callback.insert = defTable.insert.callback,
+                      callback.delete = defTable.delete.callback,
+                      datatable.options = list(
+                        id = 'def-table',
+                        class = 'bq-data-table',
+                        paging = FALSE,
+                        scrollY = 'fit-content',
+                        scrollX = TRUE,
+                        scroller = TRUE,
+                        autoWidth = FALSE,
+                        columnDefs = list(list(width = '30%', targets = c(3, 4))),
+                        fixedHeader = TRUE,
+                        drawCallback = JS(
+                          'function(){
+                          import("/etc/lib.js").then(lib => lib.SimpleBar_init("#defTable .dataTables_scrollBody"));
+                          $("#workingDialog .working-dialog").slideUp();
+                        }')
+                      ),
+                      colnames = c('Variables' = 'varName', 'Type' = 'type', 'Accepted Values' = 'values', 'Do check for...' = 'checks', '...where' = 'subset', 'Additional rules' = 'rules')
+      )  
   })
   
   # defTable.workingDialog <- ui_build$workingDialog('Generating...')
@@ -339,19 +427,22 @@ shinyServer(function(session, input, output) {
   observeEvent(input$defTable.generate,{
     session$sendCustomMessage('show', '#workingDialog .working-dialog')
     data <- dataset$data.table
-    dataset$checks.compatible <- cleanify$intelliCompatible(data)
-  
+    id.var <- input$idVariable
+    dataset$checks.compatible <- cleanify$intelliCompatible(data, strict = TRUE)
+    
+    
     type <- 
       sapply(seq_along(dataset$intelliType),
              function(i) {
-               iType <- dataset$intelliType[[i]]
+               
+               iType <- dataset$intelliType.strict[[i]]
                cType <- sapply(dataset$colnames, function(col) class(data[[col]]), USE.NAMES = FALSE)
                out <- 
-                 if (is.null(iType)) ''
+                 if (dataset$colnames[[i]] == id.var) 'id'
+               else if (is.null(iType)) ''
                else if ('key' %in% iType) {
                  if ('numeric' %in% iType) 'numeric' else 'character'
-               }
-               else switch(iType[length(iType)],
+               } else switch(iType[length(iType)],
                            'lang' = 
                              if (!any(grepl(',', data[[i]])) &
                                  sum(grepl('\\s',  data[[i]], perl = TRUE)) < 2 &
@@ -361,23 +452,23 @@ shinyServer(function(session, input, output) {
                                  sum(grepl('\\s',  data[[i]], perl = TRUE)) < 2 &
                                  length(unique(cleanify$na.blank.omit(data[[i]]))) < 20) 'factor' else 'character',
                            'numeric' = 
-                             if (length(unique(na.omit(data[[i]]))) <= 2 & 
-                                 all(as.numeric(na.omit(data[[i]])) == floor(as.numeric(na.omit(data[[i]])))) &
-                                 all(as.numeric(na.omit(data[[i]])) <= 10))
+                             if (length(unique(cleanify$na.blank.omit(data[[i]]))) <= 2 & 
+                                 all(as.numeric(cleanify$na.blank.omit(data[[i]])) == floor(as.numeric(cleanify$na.blank.omit(data[[i]])))) &
+                                 all(as.numeric(cleanify$na.blank.omit(data[[i]])) <= 10))
                                'factor' 
-                           else if (all(as.numeric(na.omit(data[[i]])) == floor(as.numeric(na.omit(data[[i]]))))) 'integer'
+                           else if (all(as.numeric(cleanify$na.blank.omit(data[[i]])) == floor(as.numeric(cleanify$na.blank.omit(data[[i]]))))) 'integer'
                            else 'numeric',
                            'dateTime' = 'dateTime',
                            'binary' = 'factor')
                
-             }, USE.NAMES = FALSE) %>% factor(., levels = c('numeric', 'integer', 'factor', 'character', 'dateTime', ''))
+             }, USE.NAMES = FALSE) %>% factor(., levels = c('id', 'numeric', 'integer', 'factor', 'character', 'dateTime', ''))
     values <- sapply(seq_along(type),
                      function(i) {
                        type = type[i]
                        
                        if (type %in% c('numeric', 'integer')){
-                         min = min(as.numeric(na.omit(data[[i]])))
-                         max = max(as.numeric(na.omit(data[[i]])))
+                         min = min(as.numeric(cleanify$na.blank.omit(data[[i]])))
+                         max = max(as.numeric(cleanify$na.blank.omit(data[[i]])))
                          if (isTRUE(min != max)) paste0('[', min, ', ', max, ']')
                          else min
                        } 
@@ -395,11 +486,12 @@ shinyServer(function(session, input, output) {
       sapply(colnames(dataset$checks.compatible), 
              function(var){
                data.var <- dataset$checks.compatible[, var]
-               names(data.var)[data.var & !names(data.var) %in% c('doubleWSP', 'case')] %>%
+               names(data.var)[cleanify$is_true(data.var) & !names(data.var) %in% c('doubleWSP', 'case')] %>%
                  factor(x = .,
                         levels = methods$names,
                         labels = names(methods$names)
-                 ) %>% as.character 
+                 ) %>% as.character %>% 
+                 (function(x) if (var == id.var) c('Replica issues', x) else x)
                # %>% append(c(sep=', ')) %>% as.list %>% do.call(paste, .)
              },
              simplify = FALSE
@@ -407,7 +499,7 @@ shinyServer(function(session, input, output) {
     
     
     dataset$defTable <- 
-      tibble(varName = as.factor(dataset$colnames), type = factor(type), values = values, checks = checks, subset = '', rules = '') %>% as.data.frame()
+      tibble(varName = dataset$colnames, type = factor(type), values = values, checks = checks, subset = '', rules = '') %>% as.data.frame()
     
     row.names(dataset$defTable) <- NULL
       
@@ -422,64 +514,9 @@ shinyServer(function(session, input, output) {
   })
   
   observeEvent(dataset$data.table, {
-    #  # req(dataset$defTable)
-    dataset$dt.result <- 
-    ui_build$dtedit(input, output,
-                    name = 'defTable',
-                    thedata = dataset$defTable,
-                    edit.cols = c('varName', 'type', 'values', 'checks', 'subset', 'rules'),
-                    edit.label.cols = c('Variables', 'Data Type', 'Accepted Values', 'Do checks for...', '...where', 'Other rules'),
-                    input.types = list(
-                      values = 'textInput',
-                      checks = 'selectInputMultiple', 
-                      type = 'selectInput',
-                      subset = 'textInput',
-                      rules = 'textInput'),
-                    input.choices = list(
-                      checks = names(methods$names), 
-                      type = c('numeric', 'integer', 'character', 'dateTime', 'factor')), 
-                    title.add = 'New check profile', label.add = ui_build$ms_icon('Add'),
-                    title.edit = 'Edit check profile', class.edit = 'btn-disabled', label.edit = ui_build$ms_icon('Edit'),
-                    title.delete = 'Delete check profile', class.delete = 'btn-disabled', label.delete = ui_build$ms_icon('Remove'),
-                    title.copy = 'Clone this profile', class.copy = 'btn-disabled', label.copy = ui_build$ms_icon('Copy'),
-                    additional.control = defTable.generate,
-                    callback.update = defTable.update.callback,
-                    callback.insert = defTable.insert.callback,
-                    callback.delete = defTable.delete.callback,
-                    datatable.options = list(
-                      id = 'def-table',
-                      class = 'bq-data-table',
-                      paging = FALSE,
-                      scrollY = 'fit-content',
-                      scrollX = TRUE,
-                      scroller = TRUE,
-                      autoWidth = FALSE,
-                      columnDefs = list(list(width = '30%', targets = c(3, 4))),
-                      fixedHeader = TRUE,
-                      drawCallback = JS(
-                        'function(){
-                          /*$(\'<div id = "defTable-edit-control"></div>\')
-                          .insertBefore(\'#defTabledt\')
-                          .append($("#defTable_add"))
-                          .append($("#defTable_edit"))
-                          .append($("#defTable_remove"))
-                          .append($("#defTable_copy"));
-                          
-                          $(\'#defTable #defTable_edit\').addClass(\'btn-disabled\');
-                          $(\'#defTable #defTable_remove\').addClass(\'btn-disabled\');
-                          $(\'#defTable #defTable_copy\').addClass(\'btn-disabled\');*/
-                          
-                          
-                          $("#workingDialog .working-dialog").slideUp();
-                        }')
-                    ),
-                    colnames = c('Variables' = 'varName', 'Type' = 'type', 'Accepted Values' = 'values', 'Do check for...' = 'checks', '...where' = 'subset', 'Additional rules' = 'rules')
-    )
+    req(dataset$defTable)
+    
   })
-  
-  # observeEvent(dataset$defTable, {
-  #   dataset$defTable.edited <- dataset$defTable
-  # })
   
   dataset$defTable.proxy <- DT::dataTableProxy('defTabledt')
   
@@ -498,7 +535,49 @@ shinyServer(function(session, input, output) {
     dataset$defTable <- dataset$defTable[-row,]
     return(dataset$defTable)
   }
-
+  
+  #Observe defTable input change
+  observeEvent(input$defTable_edit_varName, {
+    varLength <- length(input$defTable_edit_varName)
+    updateSelectInput(session,
+                      inputId = 'defTable_edit_checks',
+                      choices = 
+                        if (varLength > 1) 'Pair Incorrespondence'
+                        else 
+                          c(names(methods$names)[names(methods$names) != 'Pair Incorrespondence'],
+                            if (input$defTable_edit_varName %in% dataset$data.IDs) 'Replica issues' else NULL
+                          ),
+                      selected =
+                        if (varLength > 1) 'Pair Incorrespondence'
+                        else NULL
+                      )
+    if (varLength > 2)
+      updateSelectInput(session,
+                        inputId='defTable_edit_varName',
+                        selected = input$defTable_edit_varName[c(2,3)])
+  })
+  
+  observeEvent(input$defTable_add_varName, {
+    varLength <- length(input$defTable_add_varName)
+    updateSelectInput(session,
+                      inputId = 'defTable_add_checks',
+                      choices = 
+                        if (varLength > 1) 'Pair Incorrespondence'
+                        else 
+                          c(names(methods$names)[names(methods$names) != 'Pair Incorrespondence'],
+                            if (input$defTable_add_varName %in% dataset$data.IDs) 'Replica issues' else NULL
+                          ),
+                      selected =
+                        if (varLength > 1) 'Pair Incorrespondence'
+                        else NULL
+    )
+    
+    if (varLength > 2)
+      updateSelectInput(session,
+                        inputId='defTable_add_varName',
+                        selected = input$defTable_add_varName[c(2,3)])
+  })
+  
   #Handle reload request
   observeEvent(input$reloadRequest, {
     # print(input$reloadRequest)

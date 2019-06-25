@@ -501,6 +501,27 @@ intelliRep <- function(v, simplify = TRUE){
   else return(nRep)
 }
 
+intelliIsID <- function(v, v.type){
+  if (missing(v.type) && missing(v)) stop('At least v or v.type should be defined.')
+  if (missing(v.type)) v.type <- c(intelliType(v), 'key'[intelliIsKey(v)$is.key])
+  
+  
+  if (length(intersect(v.type, c('lang', 'dateTime'))) == 0 & 
+      if (!missing(v)) length(intelliRep(v)) < length(v)/2 & (length(unique(v) > 1)) else TRUE) TRUE else FALSE 
+} 
+
+intelliID <- function(df, showAll = FALSE){
+  df <- as.data.frame(df)
+  if (ncol(df) < 2) return(NULL)
+  vars <- colnames(df)
+  
+  are.IDs <- sapply(as.list(vars),
+                    function(var) return(intelliIsID(df[[var]])))
+  if (any(are.IDs)){
+    if (showAll) return(vars[are.IDs]) else return(var[are.IDs][[1]])
+  } else return(NULL)
+}
+
 intelliIsKey <- function(v, threshold = 1, repNo = 1){
   if (!is.atomic(v)) stop('v should be an atomic vector.')
   vector.rep <- intelliRep(v)
@@ -572,25 +593,41 @@ intelliType <- function(df, threshold = 1){
   return(res)
 }
 
-intelliIsCompatible <- function(v = NULL, v.type = NULL, test = c('whitespaces', 'doubleWSP', 'outliers', 'loners', 'binary', 'missing', 'spelling', 'case'), accept.dateTime = FALSE){
-  test <- match.arg(test)
-  if (is.null(v.type)) v.type <- c(intelliType(v), 'key'[intelliIsKey(v)$is.key])
+intelliIsCompatible <- function(v = NULL, v.type = NULL, test = c('whitespaces', 'doubleWSP', 'outliers', 'loners', 'binary', 'missing', 'spelling', 'case'), accept.dateTime = FALSE, strict = FALSE, add_on){
   if (is.null(v.type) && is.null(v)) stop('Either v or v.type should be defined.')
+  if (is.null(v.type)) v.type <- c(intelliType(v), 'key'[intelliIsKey(v)$is.key])
+  if (!is.null(v)) if (length(unique(v)) == 1) if (unique(v) %in% c('', NA)) return(NULL)
   
-  is.compatible <- switch(test, 
-                          'whitespaces' = TRUE,
-                          'doubleWSP' =  TRUE,
-                          'outliers' = 'numeric' %in% v.type,
-                          'loners' = (!('dateTime' %in% v.type) | accept.dateTime) & !('key' %in% v.type),
-                          'binary' = !'key' %in% v.type & if (!missing(v)) length(unique(v)) < 5 else TRUE,
-                          'missing' = TRUE,
-                          'spelling' = 'lang' %in% v.type,
-                          'case' = 'lang' %in% v.type
-                          )
+  if (length(unique(v)) == 0) return(FALSE)
+  if (!strict)
+    is.compatible <- switch(test, 
+                            'whitespaces' = TRUE,
+                            'doubleWSP' =  TRUE,
+                            'outliers' = 'numeric' %in% v.type,
+                            'loners' = (!('dateTime' %in% v.type) | accept.dateTime) & !('key' %in% v.type),
+                            'binary' = !'key' %in% v.type & if (!missing(v)) length(unique(v)) < 5 else TRUE,
+                            'missing' = !'key' %in% v.type,
+                            'spelling' = 'lang' %in% v.type,
+                            'case' = 'lang' %in% v.type
+    )
+  else
+    is.compatible <- switch(test,
+                            'whitespaces' = 'lang' %in% v.type | 'other' %in% v.type,
+                            'doubleWSP' =  'lang' %in% v.type | 'other' %in% v.type,
+                            'outliers' = 
+                              if('numeric' %in% v.type) {
+                                if(any(as.numeric(na.blank.omit(v)) != floor(as.numeric(na.blank.omit(v))))) TRUE else FALSE
+                              } else FALSE,
+                            'loners' = (!('dateTime' %in% v.type) | accept.dateTime) & !('key' %in% v.type) & (!'numeric' %in% v.type) & length(unique(v)) > 1,
+                            'binary' = !'key' %in% v.type & if (!missing(v)) length(unique(v)) < 5 else (!('dateTime' %in% v.type)),
+                            'missing' = !'key' %in% v.type,
+                            'spelling' = 'lang' %in% v.type & !'key' %in% v.type,
+                            'case' = 'lang' %in% v.type & !'key' %in% v.type
+    )
   return(is.compatible)
 }
 
-intelliCompatible <- function(data, tests = c('whitespaces', 'doubleWSP', 'outliers', 'loners', 'binary', 'missing', 'spelling', 'case'), accept.dateTime = FALSE){
+intelliCompatible <- function(data, tests = c('whitespaces', 'doubleWSP', 'outliers', 'loners', 'binary', 'missing', 'spelling', 'case'), accept.dateTime = FALSE, strict = FALSE){
   if (missing(accept.dateTime)) accept.dateTime <- FALSE 
   else {
     accept.dateTime <- as.logical(accept.dateTime)
@@ -600,15 +637,16 @@ intelliCompatible <- function(data, tests = c('whitespaces', 'doubleWSP', 'outli
   if (!is.null(vars)){
     out <- sapply(vars, function(var) {
       is.compatible <- sapply(tests, function(test) {
-        intelliIsCompatible(v = data[[var]], test = test, accept.dateTime = accept.dateTime) 
+        intelliIsCompatible(v = data[[var]], test = test, accept.dateTime = accept.dateTime, strict = strict) 
       }, USE.NAMES = if(length(tests)<2) FALSE else TRUE)
     })
   }
   else out <- sapply(tests, function(test) {
-    intelliIsCompatible(v = data, test = test) | if (test == 'loners') accept.dateTime else FALSE
+    intelliIsCompatible(v = data, test = test, strict = strict) | if (test == 'loners') accept.dateTime else FALSE
   })
   return(out)
 }
+
 
 cR306_init <- function(testName, problem, problemValues, problemIndexes, problemKeys, message, res = NULL, outClass = c('checkResult.306', 'checkResult')){
   outClass <- match.arg(outClass)

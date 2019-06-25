@@ -1,7 +1,6 @@
 navlistBuild <- function(methods, input, output, data = dataset, well=FALSE, widths=c(2, 10)){
 
     navlistPanel.custom <- function(...) navlistPanel(..., well=well, widths=widths)
-    
     sapply(names(methods$names), function(method){
         method.id <- methods$names[[method]]
         
@@ -14,6 +13,8 @@ navlistBuild <- function(methods, input, output, data = dataset, well=FALSE, wid
             output[[method.id]] <- renderUI(p(toString(e)))
         })
     })
+    
+    misc$set_always_on(methods$names, output)
     
     output[['checkUI']] <- renderUI(do.call(navlistPanel.custom, 
                                             lapply(names(methods$names), 

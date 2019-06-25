@@ -26,12 +26,12 @@ export const tagParse = function(table){
 export const SimpleBar_init = (elList) => {
     $(document).find(elList).each(function(idx, el) {
         new SimpleBar(el);
-        $(el).css('overflow','unset');
+        // $(el).css('overflow','unset');/
     });
 }
 
 export const responsiveText = function(){
-    cssVar.grandTabTop = ($('#dataset').position().top + $('#dataset').outerHeight()) + 'px';
+    // cssVar.grandTabTop = ($('#DT').position().top + $('#DT').outerHeight()) + 'px';
     if ($(window).width() < 768){
         $('.paginate_button.previous').html('◄');
         $('.paginate_button.next').html('►');
@@ -95,15 +95,15 @@ export async function get_highlightCoord(dt, highlightChkResVal){
 }
 
 export const _DT_callback = function(dt) {
-    SimpleBar_init('#dataset .dataTables_scrollBody');
-    table = dt.api().table();
-    if (Object.values(highlightChkResVal).length)
-     get_highlightCoord(table, highlightChkResVal)
-     .then(coord => {
-        coord.map(promise => promise.then(c => {
-            if (c.row && c.col)  _DT_highlight(table, c.row, c.col);
-        }));
-     });
+    SimpleBar_init('#DT .dataTables_scrollBody');
+    // table = dt.api().table();
+    // if (Object.values(highlightChkResVal).length)
+    //  get_highlightCoord(table, highlightChkResVal)
+    //  .then(coord => {
+    //     coord.map(promise => promise.then(c => {
+    //         if (c.row && c.col)  _DT_highlight(table, c.row, c.col);
+    //     }));
+    //  });
     
     // _DT_highlight(table, indexes);
     // $(table.cell({rowSelector: column(), columnSelector: 'BIRTHMON:name'}).node()).addClass('highlight');
@@ -133,22 +133,17 @@ export const _DT_callback = function(dt) {
 }
 
 export const _DT_initComplete = function(dt) { 
-    // let DT_table = dt;  
-    // shadowPlunge('#inputDialog .dialog');
-    // $('#DT').attr('dir', 'ltr');
-    
+        
     doki_kaboom('#inputDialog .dialog');
-    $('#data-table .dataTables_scroll .simplebar-content').scroll(function(){
-    let left = $('#data-table .dataTables_scrollBody .simplebar-content').scrollLeft();
-    $('#data-table .dataTables_scrollHead').animate({
-        scrollLeft: left}, 5);
+    $('#DT .dataTables_scroll .simplebar-content').scroll(function(){
+    let left = $('#DT .dataTables_scrollBody .simplebar-content').scrollLeft();
+    $('#DT .dataTables_scrollHead').animate({
+        scrollLeft: left}, 0);
     });
     // SimpleBar_init('#methodsNav .tab-pane');
     // SimpleBar_init('#dictNav .tab-pane');
-    // cssVar.contentHeight = $('.tab-pane.grand-tab-panel.active .tab-pane.active').height() + 'px';
-    // cssVar.contentinnerHeight = $('.tab-pane.grand-tab-panel.active .tab-pane.active .simplebar-content .row').height() + 'px';
 
-    const table = dt.api().table();
+    // const table = dt.api().table();
 }
 
 export const nav_init = (el, methods) => {

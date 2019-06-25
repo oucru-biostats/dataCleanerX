@@ -16,8 +16,8 @@ const set_bar = (x, y) => {
 
 //change on changetabbar;
 navbarNav.find('li').click(function(){
-    left = $(this).position().left;
-    right = $(this).position().left + $(this).outerWidth();
+    left = $(this).offset().left;
+    right = $(this).offset().left + $(this).outerWidth();
 
     if (left != barSize.barLeft || right != barSize.barRight) {
         if (left < barSize.barLeft) {
@@ -32,5 +32,6 @@ navbarNav.find('li').click(function(){
     } 
 });
 
-set_bar(activeTab.position().left,  activeTab.position().left + activeTab.outerWidth());
+set_bar(activeTab.offset().left,  activeTab.offset().left + activeTab.outerWidth());
 
+$(window).resize(() => set_bar(navbarNav.find('li.active').offset().left,  navbarNav.find('li.active').offset().left + navbarNav.find('li.active').outerWidth()));

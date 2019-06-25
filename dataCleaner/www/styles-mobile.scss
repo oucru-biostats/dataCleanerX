@@ -1,0 +1,250 @@
+@import "./fluent-ui/sass/_References.scss";
+
+@media screen and (max-width: 767px){
+    #fullProgram{
+        .navbar{
+
+            #inputBox{
+                width: 150px;
+            }
+            .navbar-header{
+                .navbar-brand{
+                    width: 40px;
+                    overflow: hidden;
+                    margin-left: 10px;
+                }
+            }
+            .nav.navbar-nav{
+                position: fixed;
+                top: 0;
+                left: 50px;
+                width: calc(100vw - 200px);
+
+                li{
+                    float:left;
+                }
+            }
+        }
+
+        .dataTables_wrapper{
+            .dataTables_info{
+                float:left;
+            }
+
+            .dataTables_paginate{
+                float:right;
+            }
+        } 
+
+        #checkUI{
+            .row{
+                .col-sm-2{
+                    float:left;
+                    width: 25%
+                }
+
+                .col-sm-10{
+                    float:left;
+                    width: 75%;
+                    .tab-pane{
+                        height: 300px;
+                        overflow: auto;
+
+                        .arg-holder{
+                            float:none;
+                            width: 100%;
+                            height: fit-content;
+                        }
+    
+                        .instr-holder{
+                            float:none;
+                            width: 100%;
+                            height: fit-content;
+                        }
+                    }  
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 640px){
+    .dataTables_wrapper{
+        .dataTables_length{
+            float: left;
+            text-align: left;
+        }
+
+        .dataTables_filter{
+            float: right;
+            text-align: right;
+            margin-top: 0;
+        }
+    } 
+}
+
+@media screen and (max-width: 527px){
+
+    #inputDialog{
+        top:0;
+        left:0;
+        .dialog{
+            width: 100vw;
+            height: 100vh;
+            padding-top: calc(50vh - 200px);
+            top:0;
+            left: 0;
+
+            h1{
+                font-size: 9vmin;
+            }
+        }
+    }
+    #fullProgram{
+        font-size: 12px;
+        .navbar{
+
+            #inputBox{
+                width: 70vw;
+                max-width: unset;
+                position: absolute;
+                top: 65px;
+                left: calc(15vw);
+            }
+
+            .navbar-header{
+                .navbar-brand{
+                    width: 40px;
+                    overflow: hidden;
+                    margin-left: 10px;
+                }
+            }
+            .nav.navbar-nav{
+                position: fixed;
+                top: 0;
+                left: 50px;
+                width: calc(100vw - 40px);
+
+                li{
+                    float:left;
+                    width: 33.33333%;
+                    
+                    a{  
+                        font-size: 12px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        padding-left:0;
+                        padding-right: 0;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+        .grand-tab{
+            position: relative;
+            top: 45px;    
+                   
+            #DT{
+                
+                .dataTables_length{
+                    margin-left: 35px;
+                    float: left;
+                    width: fit-content;
+                    font-size: 12px;
+                }
+    
+                .dataTables_filter{
+                    float: right;
+                    width: 50vw;
+                    white-space: nowrap;
+                    padding: 0;
+                    margin-top: -4px;
+                    font-size: 12px;
+
+                    input{
+                        width: 33vw;
+                    }
+                }
+
+                .dataTables_scrollBody{
+                        max-height: calc(100vh - 430px);                    
+                }
+            }
+
+            #defTable{
+                .control-buttons{
+                    button{
+                        
+                        i{
+                            font-size: 10px;
+                        }
+
+                        &:not(.btn-disabled){
+                            padding: 4px 10px;
+                            margin-left: 0px;
+                        }
+
+                        &.btn-disabled{
+                            margin-left: -3px;
+                        }
+                    }
+                }
+                .dataTables_filter{
+                    float:right;
+                    white-space: nowrap;
+                    width: 40vw;
+
+                    input{
+                        width: calc(40vw - 55px)
+                    }
+                }
+            }
+        }
+        
+        
+        #checkUI-holder.show #checkUI{
+            &>.row{
+                &>div{
+                    &:first-child{
+                        @media screen and (max-width: 389px){
+                            &:hover{
+                                background-color: #fff;
+                                @supports (backdrop-filter: blur(20px)) {
+                                    background-color: rgba(255,255,255,.5);
+                                    backdrop-filter: blur(20px);
+                                }
+                                width: fit-content;
+                                @include ms-depth-16;    
+                            }
+                        }
+                    }
+
+                    &:nth-child(2){
+                        .tab-pane{
+                            height: 300px;
+                            overflow: auto;
+    
+                            .arg-holder{
+                                float:none;
+                                width: 100%;
+                                height: fit-content;
+
+                                .material-switch{
+                                    white-space: nowrap;
+                                }
+                            }
+        
+                            .instr-holder{
+                                float:none;
+                                width: 100%;
+                                height: fit-content;
+                            }
+                        }  
+                    }
+
+                }               
+            }
+        }
+    }
+}

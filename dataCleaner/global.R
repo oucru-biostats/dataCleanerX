@@ -2,6 +2,7 @@
 
 library(shiny)
 library(shinyWidgets)
+library(V8)
 library(shinyjs)
 library(tidyverse)
 library(DT)

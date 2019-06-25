@@ -1,0 +1,204 @@
+/*
+  Your use of the content in the files referenced here is subject to the terms of the license at http://aka.ms/fabric-assets-license
+*/
+@media screen and (max-width: 767px) {
+  #fullProgram .navbar #inputBox {
+    width: 150px;
+  }
+  #fullProgram .navbar .navbar-header .navbar-brand {
+    width: 40px;
+    overflow: hidden;
+    margin-left: 10px;
+  }
+  #fullProgram .navbar .nav.navbar-nav {
+    position: fixed;
+    top: 0;
+    left: 50px;
+    width: calc(100vw - 200px);
+  }
+  #fullProgram .navbar .nav.navbar-nav li {
+    float: left;
+  }
+  #fullProgram .dataTables_wrapper .dataTables_info {
+    float: left;
+  }
+  #fullProgram .dataTables_wrapper .dataTables_paginate {
+    float: right;
+  }
+  #fullProgram #checkUI .row .col-sm-2 {
+    float: left;
+    width: 25%;
+  }
+  #fullProgram #checkUI .row .col-sm-10 {
+    float: left;
+    width: 75%;
+  }
+  #fullProgram #checkUI .row .col-sm-10 .tab-pane {
+    height: 300px;
+    overflow: auto;
+  }
+  #fullProgram #checkUI .row .col-sm-10 .tab-pane .arg-holder {
+    float: none;
+    width: 100%;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+  }
+  #fullProgram #checkUI .row .col-sm-10 .tab-pane .instr-holder {
+    float: none;
+    width: 100%;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .dataTables_wrapper .dataTables_length {
+    float: left;
+    text-align: left;
+  }
+  .dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+    margin-top: 0;
+  }
+}
+
+@media screen and (max-width: 527px) {
+  #inputDialog {
+    top: 0;
+    left: 0;
+  }
+  #inputDialog .dialog {
+    width: 100vw;
+    height: 100vh;
+    padding-top: calc(50vh - 200px);
+    top: 0;
+    left: 0;
+  }
+  #inputDialog .dialog h1 {
+    font-size: 9vmin;
+  }
+  #fullProgram {
+    font-size: 12px;
+  }
+  #fullProgram .navbar #inputBox {
+    width: 70vw;
+    max-width: unset;
+    position: absolute;
+    top: 65px;
+    left: calc(15vw);
+  }
+  #fullProgram .navbar .navbar-header .navbar-brand {
+    width: 40px;
+    overflow: hidden;
+    margin-left: 10px;
+  }
+  #fullProgram .navbar .nav.navbar-nav {
+    position: fixed;
+    top: 0;
+    left: 50px;
+    width: calc(100vw - 40px);
+  }
+  #fullProgram .navbar .nav.navbar-nav li {
+    float: left;
+    width: 33.33333%;
+  }
+  #fullProgram .navbar .nav.navbar-nav li a {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+  }
+  #fullProgram .grand-tab {
+    position: relative;
+    top: 45px;
+  }
+  #fullProgram .grand-tab #DT .dataTables_length {
+    margin-left: 35px;
+    float: left;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    font-size: 12px;
+  }
+  #fullProgram .grand-tab #DT .dataTables_filter {
+    float: right;
+    width: 50vw;
+    white-space: nowrap;
+    padding: 0;
+    margin-top: -4px;
+    font-size: 12px;
+  }
+  #fullProgram .grand-tab #DT .dataTables_filter input {
+    width: 33vw;
+  }
+  #fullProgram .grand-tab #DT .dataTables_scrollBody {
+    max-height: calc(100vh - 430px);
+  }
+  #fullProgram .grand-tab #defTable .control-buttons button i {
+    font-size: 10px;
+  }
+  #fullProgram .grand-tab #defTable .control-buttons button:not(.btn-disabled) {
+    padding: 4px 10px;
+    margin-left: 0px;
+  }
+  #fullProgram .grand-tab #defTable .control-buttons button.btn-disabled {
+    margin-left: -3px;
+  }
+  #fullProgram .grand-tab #defTable .dataTables_filter {
+    float: right;
+    white-space: nowrap;
+    width: 40vw;
+  }
+  #fullProgram .grand-tab #defTable .dataTables_filter input {
+    width: calc(40vw - 55px);
+  }
+}
+
+@media screen and (max-width: 527px) and (max-width: 389px) {
+  #fullProgram #checkUI-holder.show #checkUI > .row > div:first-child:hover {
+    background-color: #fff;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    -webkit-box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
+            box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
+  }
+  @supports ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+    #fullProgram #checkUI-holder.show #checkUI > .row > div:first-child:hover {
+      background-color: rgba(255, 255, 255, 0.5);
+      -webkit-backdrop-filter: blur(20px);
+              backdrop-filter: blur(20px);
+    }
+  }
+}
+
+@media screen and (max-width: 527px) {
+  #fullProgram #checkUI-holder.show #checkUI > .row > div:nth-child(2) .tab-pane {
+    height: 300px;
+    overflow: auto;
+  }
+  #fullProgram #checkUI-holder.show #checkUI > .row > div:nth-child(2) .tab-pane .arg-holder {
+    float: none;
+    width: 100%;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+  }
+  #fullProgram #checkUI-holder.show #checkUI > .row > div:nth-child(2) .tab-pane .arg-holder .material-switch {
+    white-space: nowrap;
+  }
+  #fullProgram #checkUI-holder.show #checkUI > .row > div:nth-child(2) .tab-pane .instr-holder {
+    float: none;
+    width: 100%;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+  }
+}
+/*# sourceMappingURL=styles-mobile.css.map */

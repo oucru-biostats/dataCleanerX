@@ -25,7 +25,7 @@ method <- add.method(method, "Loners", 'loners', 'lnr', instruction = lnr_instru
 method <- add.method(method, "Binaries", 'binary', 'bnr', instruction = bnr_instruction)
 method <- add.method(method, "White spaces", 'whitespaces', 'wsp', instruction = wsp_instruction)
 method <- add.method(method, "Spelling issues", 'spelling', 'spl', instruction = spl_instruction)
-method <- add.method(method, "Pair Incorrespondence", 'pair', 'pair')
+method <- add.method(method, "Series Issues", 'series', 'sir')
 
 
 # method <- 

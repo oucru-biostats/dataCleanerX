@@ -47,12 +47,12 @@
     "result": "spl.result.R",
     "instruction": "<p>In this section, we will check for typos and/or case issues in selected columns.<\/p><p>Cells with case issues have the same values with others but are written in a different text case \n  (ie. <em>FOO<\/em> instead of <em>Foo<\/em>, <em>bar<\/em> instead of <em>Bar<\/em>).<\/p><p>Sometimes, the columns we are checking contains non-English words, abbreviations, IDs, date-times, etc.\n  It makes no sense trying to correct them.\n  Hence, we purposely add an <strong>upper limit<\/strong> to the amount of errors allowed to exist in a column, in order to advoid noisy results.\n  You can try adjusting the dial to get the result you want.<\/p><p>However, it is always recommended to untick those variables by yourself, if possible.<\/p>"
   },
-  "Pair Incorrespondence": {
-    "id": "pair",
-    "alias": "pair",
-    "render": "pair.render.R",
-    "main": "pair.main.R",
-    "result": "pair.result.R",
+  "Series Issues": {
+    "id": "series",
+    "alias": "sir",
+    "render": "sir.render.R",
+    "main": "sir.main.R",
+    "result": "sir.result.R",
     "instruction": ""
   }
 }

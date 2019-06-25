@@ -103,6 +103,17 @@ $input-top: calc(50vh - 20px);
     pointer-events: none!important;
 }
 
+.shadowSurge{
+    @include ms-motion-slideDownIn;    
+    animation-duration: 1s;
+}
+
+.shadowPlunge{
+    @include ms-motion-fadeOut;
+    animation-duration: 0.5s;
+}
+
+   
 .dialog{
     @include ms-depth-64;
     display: block;
@@ -133,18 +144,6 @@ $input-top: calc(50vh - 20px);
     }
 }
 
-.shadowSurge{
-    @include ms-motion-slideDownIn;    
-    animation-duration: 1s;
-}
-
-.shadowPlunge{
-    @include ms-motion-fadeOut;
-    animation-duration: 0.5s;
-}
-
-
-
 body{
     transition: all 0.3s ease;
     -ms-transition: all 0.3s ease;
@@ -153,8 +152,11 @@ body{
     min-width:300px;
     background: $ms-color-neutralLighter;;
     outline-color: $ms-color-themePrimary;
-    overflow-x: hidden;
+    overflow: hidden;
     
+    label{
+        user-select: none;
+    }
 
     #header{
         cursor: default;
@@ -177,7 +179,7 @@ body{
             margin-bottom: 1px;
             white-space: nowrap;
             height: 3vw;
-            font-size: 4.5vmin;
+            font-size: 30px;
         }
     }
     
@@ -264,8 +266,8 @@ body{
 }
 
 #defTableHolder{
-    max-height: 50vh;
-    padding: 5px;
+    // max-height: calc(100vh - 400px);
+    padding: 0 5px;
     overflow-y: auto;
 
     // #defTable{
@@ -316,13 +318,28 @@ body{
 
 .options.float{
 
-    &::before{
+    &::after{
         content: ' ';
         font-size: 12px;    
         position: absolute;
         top: 8px;
-        left: 50%;
+        left: 30px;
         font-weight: 800;
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    &::before{
+        font-size: 12px;    
+        position: absolute;
+        top: 8px;
+        left: 10px;
+        display: inline-block;
+        font-family: FabricMDL2Icons;
+        font-style: normal;
+        font-weight: 800;
+        pointer-events: none;
+        z-index: 3;
     }
     &:hover{
         @include ms-depth-64;
@@ -337,11 +354,11 @@ body{
     left: 5px;
     right:5px;
     background-color: #fff;
-    @supports (backdrop-filter: blur(7px)) {
-        background-color: rgba(255,255,255,.8);
-        backdrop-filter: blur(7px);
+    @supports (backdrop-filter: blur(20px)) {
+        background-color: rgba(255,255,255,.2);
+        backdrop-filter: blur(20px);
     }
-    width: calc(100% - 10px);
+    width: calc(100vw - 10px);
     height: 350px;
     @include ms-depth-16;
     border: 1px solid $ms-color-gray40;
@@ -354,6 +371,7 @@ body{
         display:block;
         cursor:pointer;
         margin-bottom: 10px;
+        z-index: 3;
 
         .btn-close{
             right: 8px;
@@ -386,19 +404,66 @@ body{
 }
 
 #checkUI-holder{
+    border: none;
+    padding:0;
     &::before{
-        content: 'Checks Configuration';
+        @include ms-Icon--ConfigurationSolid;
+    }
+    &::after{
+        content: 'Check Params';
+        left: calc(50vw - 36px);
+    }
+
+    &.show #checkUI {
+        &>.row{     
+            &>div{
+                &:nth-child(2){
+                    background-color: rgba(255,255,255,1);
+                }
+            }
+        }
     }
 
     #checkUI {
+        padding: 0px;
+        height: 100%;
+        &>.row{
+            height: 100%;
+        &>div{
+                &:first-child{
+                    margin-left:0;
+                    padding-left: 0;
+                    padding-right: 0;
+                    height: 100%;
+                    position:absolute;
+                    top: 0;
+                    left:0;
+                    padding-top: 40px;
+                    z-index:2;
+                    transition: all 0.3s linear;
+                }
+                &:nth-child(2){
+                    position: absolute;
+                    top: 0;
+                    right:0;
+                    background-color: transparent;
+                    transition: 0.3s background-color ease-in;
+                    // margin-top: -45px;
+                    padding-top: 45px;
+                    border-radius: 0 4px 4px 0;
+                    height: 100%;
+                    pointer-events: none;
+                }
+            }
+        }
         .nav>li{
             &>a{
-                padding: 5px 10px;
+                padding: 5px 7px;
                 color: $ms-color-neutralPrimary;
                 border-radius: 0;
-                border-left: 2px solid transparent;
+                border-left: 4px solid transparent;
                 transition: all 300ms ease-in-out;
-                font-size: 12.5px;
+                font-size: 12px;
                 white-space: nowrap;
                 overflow-x: hidden;
                 text-overflow: ellipsis;
@@ -418,6 +483,7 @@ body{
         }
         
         .tab-content{
+            pointer-events: visible;
             .arg-holder{
                 float: left;
                 width: 75%;
@@ -446,13 +512,13 @@ body{
     float: left;
     z-index: 100001;
     padding: 0;
-    width: 0px;
-    height: 0px;
+    width: 30px;
+    height: 30px;
     margin-top: -3px;
+    position: absolute;
     
     #datasetMenu{
         
-        display: none;
         padding: 0 0 0 10px;
         border: none;
         background-color: transparent;
@@ -494,7 +560,7 @@ body{
         animation-duration:300ms;
 
         ul{
-                      
+                   
             @include ms-depth-8;
             border-radius: 4px;
 
@@ -504,7 +570,7 @@ body{
             }
 
             &#dataset-menu{
-                @include ms-depth-0;
+                @include ms-depth-8;
 
                 &>li{
                     padding: 2.5px 0;
@@ -551,26 +617,31 @@ body{
         }
     }
 
-    #columns-chooser-holder, #key-var-chooser-holder {
+    #columns-chooser-holder, #key-var-chooser-holder, #id-var-chooser-holder, #checks-chooser-holder {
         border: 1px solid transparent;
         border-radius: 0 4px 4px 4px;
+        padding-bottom: 10px;
+        padding-top: 5px;
+        overflow-x: hidden;
 
         .disabled{
             pointer-events: none;
         }
 
         .awesome-checkbox-chooser{
-            max-height:70vh;
+            max-height: 518px;
+            @media screen and (max-height: 728px){
+                max-height: calc(100vh - 210px);
+            }
             width: auto;
             overflow-y:hidden!important;
             overflow-x:hidden;
-            padding:0;
-            box-shadow: 0px 0px 5px var(--color-inactive);
+            padding: 0;
 
             &>p{
-                padding: 5px;
+                padding: 5px 5px 5px 5px;
                 margin: 0;
-                color: var(--color-inactive);
+                color: $ms-color-neutralDark;
                 text-align:right;
                 font-style: italic;
             }
@@ -585,16 +656,24 @@ body{
         }
 
         .awesome-checkbox-menu{
-            padding: 0px 0px 10px 7px!important;
-            max-height: 70vh;
+            padding: 0px 0px 0px 7px!important;
+            max-height: 518px;
+            @media screen and (max-height: 728px){
+                max-height: calc(100vh - 210px);
+            }
             overflow-y: auto;
             // min-height: 100px;
             box-sizing: border-box;
             overflow-x: hidden;
             text-overflow:ellipsis;
+            width: fit-content;
             
             @supports (-ms-content-zooming: none){
                 width: 20vw!important;
+            }
+
+            .shiny-options-group{
+                margin-right: -10px;
             }
         }
 
@@ -603,6 +682,8 @@ body{
             background: unset;
             color: unset;
         }
+        
+        
     }
 
     .awesome-checkbox{
@@ -618,7 +699,7 @@ body{
         overflow-x:hidden;
 
         &:hover{
-            background:  #337ab7;
+            background:  $ms-color-themePrimary;
             color: #fff;
         }
 
@@ -637,12 +718,12 @@ body{
                 }
 
                 &::after{
-                    color: #398439;
+                    color: $ms-color-sharedGreen20;
                 }
 
-                &.defaultID::after{
-                    color: #972929;
-                }
+                // &.defaultID::after{
+                //     color: #972929;
+                // }
             }
         }
     }
@@ -672,12 +753,13 @@ body{
             }
 
             &::after{
-                background-color: #398439;
+                color: $ms-color-sharedGreen20;
+                background-color: $ms-color-sharedGreen20;
             }
         }
 
         &:hover{
-            background:  #337ab7;
+            background:  $ms-color-themePrimary;
             color: #fff;
 
             label{   
@@ -707,25 +789,57 @@ body{
         }
     }
 
+   
+
     .ui-state-active:not([id = 'showOriginal-holder']), .ui-widget-content .ui-state-active{
-        border: 1px solid #337ab7;
-        background:  #337ab7;
+        border: 1px solid $ms-color-themeDarkAlt;
+        background:  $ms-color-themePrimary;
         max-height:70vh;
     }
     
 
-    @media only screen and (max-width: 767px){
-        top: 10px;
+
+}
+
+#doChecks{
+    overflow-x: auto;
+    white-space: nowrap;
+
+    label{
+        padding-left: 0;
+
+        &[for = "doChecks"]{
+            float: left;
+            margin-bottom: 0px;
+            margin-top: -3px;
+            width: fit-content;
+            animation: width 0.3s ease;
+
+            @media only screen and (max-width: 850px){
+                width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+               
+
+        &::before{
+            outline: none;
+            background-color: transparent;
+            border: none;
+        }
+
+        &::after{
+            outline: none;
+            color: $ms-color-sharedGreen20;
+            margin-top: 3px;
+        }
     }
 }
 
 #DT, #defTable{
 
-   .dataTables_length{
-       margin-left: 10px;
-   } 
-
-   .dataTables_filter {
+    .dataTables_filter {
         padding-right: 13px;
 
         input{
@@ -754,7 +868,7 @@ body{
     }
 
     .dataTables_length{
-        margin-left:10px;
+        margin-left: 40px;
 
         @media only screen and (max-width: 500px){
             margin-left:0;
@@ -873,11 +987,11 @@ body{
 
 .dataTables_scrollBody{
     #DT &{
-        max-height: calc(100vh - 380px); 
+        max-height: calc(100vh - 270px); 
     }
 
     #defTable &{
-        max-height: calc(100vh - 220px); 
+        max-height: calc(100vh - 230px); 
     }
     
 }
@@ -956,19 +1070,21 @@ body{
                 margin:0 auto!important;
 
                 th.sorting, td{
-                    border-bottom-color: var(--color-inactive);
+                    border-bottom-color: $ms-color-neutralLight;
                 }
 
                 tr:last-child{
-                    box-shadow: 0px 1px 2px var(--color-inactive);
+                    box-shadow: 0px 1px 2px $ms-color-neutralLight;
                 }                
             }
         }
     }
 }
-
+#mainUI{
+    overflow: hidden;
+}
 #fullProgram{
-
+    
     #doChecks_simple{
         padding: 0 10px;
     }
@@ -995,6 +1111,8 @@ body{
             -o-user-select: none;
             -khtml-user-select: none;
             -webkit-touch-callout: none;  
+            width: fit-content;
+            max-width: 100vw;
 
             .navbar-brand {
                 margin-left: 0;
@@ -1037,7 +1155,8 @@ body{
             left: var(--barLeft);
             right: var(--barRight);
             background-color: var(--ms-themeDarker);
-            transition: 0.3s all ease-in-out;
+            border-radius: 4px;
+            transition: 0.3s all ease-in;
         }
     } 
 }
@@ -1122,7 +1241,7 @@ body{
     position: absolute;
     top: 50vh;
     left: 50vw;
-    max-width:calc(25% - 10px);
+    // max-width:calc(25% - 10px);
     transition: all ease 0.3s;
     -moz-transition: all ease 0.3s;
     -o-transition: all ease 0.3s;
@@ -1205,6 +1324,21 @@ body{
     animation-duration: 500ms;
     animation-delay: 200ms;
     padding-bottom: 50px;
+}
+
+.dropdown.bootstrap-select.form-control{
+    .dropdown-menu.open{
+        @include ms-motion-slideDownIn;
+        @include ms-depth-8;
+        animation-duration: 0.3s;
+        border: none;
+    }
+    &.dropup{
+        .dropdown-menu.open{
+            @include ms-motion-slideUpIn;
+            animation-duration: 0.3s;
+        }
+    }
 }
 
 .material-switch {
