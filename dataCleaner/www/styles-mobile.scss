@@ -40,12 +40,12 @@
             .row{
                 .col-sm-2{
                     float:left;
-                    width: 25%
+                    width: 16.66666667%;
                 }
 
                 .col-sm-10{
                     float:left;
-                    width: 75%;
+                    width: 83.33333333%;
                     .tab-pane{
                         height: 300px;
                         overflow: auto;
@@ -81,6 +81,25 @@
             margin-top: 0;
         }
     } 
+}
+@media screen and (max-width: 578px){
+    #checkUI-holder.show #checkUI{
+        &>.row{
+            &>div{
+                &:first-child{
+                    &:hover{
+                        background-color: $ms-color-neutralLighterAlt;
+                        @supports (backdrop-filter: blur(10px)) {
+                            background-color: rgba(255, 255, 255, 0.3);
+                            backdrop-filter: blur(10px);
+                        }
+                        width: fit-content;
+                        @include ms-depth-16;    
+                    }
+                }
+            }
+        }
+    }
 }
 
 @media screen and (max-width: 527px){
@@ -206,20 +225,7 @@
         #checkUI-holder.show #checkUI{
             &>.row{
                 &>div{
-                    &:first-child{
-                        @media screen and (max-width: 389px){
-                            &:hover{
-                                background-color: #fff;
-                                @supports (backdrop-filter: blur(20px)) {
-                                    background-color: rgba(255,255,255,.5);
-                                    backdrop-filter: blur(20px);
-                                }
-                                width: fit-content;
-                                @include ms-depth-16;    
-                            }
-                        }
-                    }
-
+                    
                     &:nth-child(2){
                         .tab-pane{
                             height: 300px;

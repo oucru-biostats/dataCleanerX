@@ -1,0 +1,4 @@
+body.darkmode--activated .navbar-brand, body.darkmode--activated .navbar-nav {
+  mix-blend-mode: difference;
+}
+/*# sourceMappingURL=styles-dark.css.map */

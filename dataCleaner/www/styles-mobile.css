@@ -27,11 +27,11 @@
   }
   #fullProgram #checkUI .row .col-sm-2 {
     float: left;
-    width: 25%;
+    width: 16.66666667%;
   }
   #fullProgram #checkUI .row .col-sm-10 {
     float: left;
-    width: 75%;
+    width: 83.33333333%;
   }
   #fullProgram #checkUI .row .col-sm-10 .tab-pane {
     height: 300px;
@@ -62,6 +62,24 @@
     float: right;
     text-align: right;
     margin-top: 0;
+  }
+}
+
+@media screen and (max-width: 578px) {
+  #checkUI-holder.show #checkUI > .row > div:first-child:hover {
+    background-color: #faf9f8;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    -webkit-box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
+            box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
+  }
+  @supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+    #checkUI-holder.show #checkUI > .row > div:first-child:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(10px);
+    }
   }
 }
 
@@ -158,27 +176,6 @@
   #fullProgram .grand-tab #defTable .dataTables_filter input {
     width: calc(40vw - 55px);
   }
-}
-
-@media screen and (max-width: 527px) and (max-width: 389px) {
-  #fullProgram #checkUI-holder.show #checkUI > .row > div:first-child:hover {
-    background-color: #fff;
-    width: -webkit-fit-content;
-    width: -moz-fit-content;
-    width: fit-content;
-    -webkit-box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
-            box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
-  }
-  @supports ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
-    #fullProgram #checkUI-holder.show #checkUI > .row > div:first-child:hover {
-      background-color: rgba(255, 255, 255, 0.5);
-      -webkit-backdrop-filter: blur(20px);
-              backdrop-filter: blur(20px);
-    }
-  }
-}
-
-@media screen and (max-width: 527px) {
   #fullProgram #checkUI-holder.show #checkUI > .row > div:nth-child(2) .tab-pane {
     height: 300px;
     overflow: auto;

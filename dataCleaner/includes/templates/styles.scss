@@ -1,0 +1,79 @@
+@import "./fluent-ui/sass/_References.scss";
+
+body{
+  font-size: 13px;
+  
+  td{font-size:10.5px; padding:5.5px!important} 
+  
+  th{font-size:11px} 
+  
+  .page-list{
+    .show{display:inline-block!important}
+  } 
+
+  .show{
+    opacity:1;
+  }
+  
+  #header{text-align:center}
+  .section{
+    position: relative;
+
+    &.level1{
+      height:36px;
+      overflow:hidden;
+      transition: all 0.3s linear;
+
+      h1{
+        color: $ms-color-themeDark; 
+        position: relative;
+
+        &::after{
+          content: '';
+          border: $ms-color-themeDark 1px solid;
+          border-width: 0 0 1px 0;
+          width: 100%;
+          display: block;
+          margin-top: 5px;
+        }
+      }
+
+      .btn{
+        &.btn-section{
+          display: block;
+          position: absolute;
+          right: 0;
+          top: 5px;
+          left: calc(100% - 25px);
+
+          span{
+            transform: rotate(0deg);
+            transition: all 0.3s linear;
+          }
+        }
+      }
+
+      &.show{
+        height: fit-content;
+        // :not(h1), :not(.btn){
+        //   @include ms-motion-slideDownIn;
+        //   animation-duration: 300ms;
+        // }
+        
+        .btn.btn-section span{
+          transform: rotate(180deg);
+        }
+      }
+
+      .dropdown-menu.dropdown-menu-right.show{
+        @include ms-depth-8;
+        border: 1px solid transparent;
+      }
+    }
+
+    &.level2{
+      color: $ms-color-themePrimary;
+    }
+  } 
+}
+  

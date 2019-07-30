@@ -81,7 +81,7 @@ export async function get_highlightRow(dt, highlightIdx){
 }
 
 export async function get_highlightCoord(dt, highlightChkResVal){
-    highlightVar = Object.keys(highlightChkResVal);
+    highlightVar = Object.keys(highlightChkResVal);D
 
     highlightCol = await get_highlightCol(dt, highlightVar);
     highlightCoord = highlightVar.map(async function(thisVar, idx){
@@ -135,15 +135,23 @@ export const _DT_callback = function(dt) {
 export const _DT_initComplete = function(dt) { 
         
     doki_kaboom('#inputDialog .dialog');
-    $('#DT .dataTables_scroll .simplebar-content').scroll(function(){
-    let left = $('#DT .dataTables_scrollBody .simplebar-content').scrollLeft();
-    $('#DT .dataTables_scrollHead').animate({
-        scrollLeft: left}, 0);
-    });
+    // $('#DT .dataTables_scroll .simplebar-content').scroll(function(){
+    // let left = $('#DT .dataTables_scrollBody .simplebar-content').scrollLeft();
+    // $('#DT .dataTables_scrollHead').animate({
+    //     scrollLeft: left}, 0);
+    // });
     // SimpleBar_init('#methodsNav .tab-pane');
     // SimpleBar_init('#dictNav .tab-pane');
 
     // const table = dt.api().table();
+}
+
+export const _datatable_scrollBinding = (dt) => {
+    $(dt).find('.dataTables_scroll .simplebar-content-wrapper').scroll(function(){
+        let left = $(dt).find('.dataTables_scrollBody .simplebar-content-wrapper').scrollLeft();
+        $(dt).find('.dataTables_scrollHead').animate({
+            scrollLeft: left}, 0);
+    });
 }
 
 export const nav_init = (el, methods) => {

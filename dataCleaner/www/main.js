@@ -1,7 +1,22 @@
 import * as lib from './etc/lib.js';
+import {cssVar} from './etc/css-var.js';
+
 let DT_table;
 let lv = 0;
 
+var options = {
+    bottom: '64px', // default: '32px'
+    right: 'unset', // default: '32px'
+    left: '32px', // default: 'unset'
+    time: '0.5s', // default: '0.3s'
+    mixColor: 'inherit', // default: '#fff'
+    backgroundColor: 'inherit',  // default: '#fff'
+    buttonColorDark: '#100f2c',  // default: '#100f2c'
+    buttonColorLight: '#fff', // default: '#fff'
+    saveInCookies: true, // default: true,
+}
+  
+export const darkmode = new Darkmode(options);
 
 const _DT_initComplete = function(dt) {
     return(lib._DT_initComplete(dt));
@@ -37,8 +52,13 @@ $(document).ready(() => {
         }
     });
 
+    $(document).on('click','.navbar-brand', () => darkmode.toggle());
+
 });
 
+Shiny.addCustomMessageHandler('sheetPicker_on', state => {
+    cssVar.FileInputWidth = state ? '50%' : '100%'; 
+});
 
 Shiny.addCustomMessageHandler('dataReady', state => {
     $('#inputDialog .dialog').addClass('out');

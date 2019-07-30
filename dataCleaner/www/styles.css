@@ -205,6 +205,10 @@
 /*
   Your use of the content in the files referenced here is subject to the terms of the license at http://aka.ms/fabric-assets-license
 */
+body.darkmode--activated .navbar-brand, body.darkmode--activated .navbar-nav {
+  mix-blend-mode: difference;
+}
+
 @-webkit-keyframes marquee {
   0% {
     left: -50%;
@@ -213,6 +217,7 @@
     left: 150%;
   }
 }
+
 @keyframes marquee {
   0% {
     left: -50%;
@@ -666,6 +671,16 @@ body #foreground #text .lds-roller {
 #checkUI-holder::after {
   content: 'Check Params';
   left: calc(50vw - 36px);
+}
+
+#checkUI-holder.show #checkUI > .row > div:first-child {
+  background-color: #edebe9;
+}
+
+@supports ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+  #checkUI-holder.show #checkUI > .row > div:first-child {
+    background-color: transparent;
+  }
 }
 
 #checkUI-holder.show #checkUI > .row > div:nth-child(2) {
@@ -1431,7 +1446,7 @@ body #foreground #text .lds-roller {
 
 #fullProgram .navbar .nav.navbar-nav > .active > a {
   background-color: transparent;
-  color: var(--ms-themeDarker);
+  color: #005a9e;
 }
 
 #fullProgram .navbar .nav.navbar-nav a {
@@ -1618,8 +1633,8 @@ body #foreground #text .lds-roller {
 }
 
 .doki-kaboom {
-  -webkit-animation: doki-kaboom 0.75s ease-in;
-          animation: doki-kaboom 0.75s ease-in;
+  -webkit-animation: doki-kaboom 1s ease-in;
+          animation: doki-kaboom 1s ease-in;
 }
 
 .tab-content .grand-tab.tab-pane {
@@ -1667,6 +1682,10 @@ body #foreground #text .lds-roller {
           animation: ms-motion-slideDownIn 100ms cubic-bezier(0.1, 0.9, 0.2, 1) both, ms-motion-fadeIn 100ms cubic-bezier(0, 0, 1, 1) both;
   -webkit-animation-duration: 0.5s;
           animation-duration: 0.5s;
+}
+
+.darkmode-layer, .darkmode-toggle {
+  z-index: 100000;
 }
 
 .doki-doki {

@@ -1,0 +1,73 @@
+---
+title: "Data Check Report"
+author: "`r htmltools::HTML('&#x1F916')`"
+date: "`r Sys.Date()`"
+output: html_document
+params:
+  report: !r NULL
+  results: !r NULL
+  defTable: !r NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+func <- new.env()
+source('reportFunctions.R', local = func)
+
+```
+```{r get_depedencies}
+func$cdnHook('./jquery-ui/jquery-ui.min.css','style')
+func$cdnHook('https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css', 'style')
+func$cdnHook("https://unpkg.com/bootstrap-table@1.15.2/dist/bootstrap-table.min.css", "style")
+func$cdnHook("https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/10.0.0/css/fabric.min.css", "style")
+func$cdnHook("plugins/filter-control/bootstrap-table-filter-control.css", "style")
+func$cdnHook("https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.css", "style")
+func$cdnHook('styles.css', 'style')
+
+func$cdnHook("https://code.jquery.com/jquery-3.3.1.min.js", 'script')
+func$cdnHook('./jquery-ui/jquery-ui.min.js', 'script')
+func$cdnHook("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js", 'script')
+func$cdnHook("https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js", 'script',
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k", crossorigin="anonymous")
+func$cdnHook("https://cdn.jsdelivr.net/npm/vue", 'script')
+func$cdnHook('https://unpkg.com/tableexport.jquery.plugin/libs/jsPDF/jspdf.min.js', 'script')
+func$cdnHook('https://unpkg.com/tableexport.jquery.plugin/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js', 'script')
+func$cdnHook("https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js", "script")
+func$cdnHook("https://unpkg.com/bootstrap-table@1.15.2/dist/bootstrap-table.min.js", 'script')
+func$cdnHook("https://unpkg.com/bootstrap-table@1.15.2/dist/bootstrap-table-vue.min.js", 'script')
+
+func$cdnHook("https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.min.js", "script")
+func$cdnHook("https://unpkg.com/bootstrap-table@1.15.2/dist/extensions/resizable/bootstrap-table-resizable.min.js", "script")
+func$cdnHook("https://unpkg.com/bootstrap-table@1.15.2/dist/extensions/toolbar/bootstrap-table-toolbar.min.js", "script")
+func$cdnHook("https://unpkg.com/bootstrap-table@1.15.2/dist/extensions/export/bootstrap-table-export.min.js", "script")
+func$cdnHook("https://unpkg.com/bootstrap-table@1.15.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js", "script")
+func$cdnHook("scripts.js", "script")
+```
+
+# Check Summary
+
+These checks were used in the data. 
+
+```{r summary}
+defTabledt <- func$BSTable(params$defTable)
+defTabledt$el; defTabledt$def; defTabledt$vue
+```
+
+# Check Results
+
+```{r results='asis'}
+# # as.character(shiny::selectInput(inputId = 'text', label = 'Choose animal', choices = c(Dog='dog', Cat='cat', Trump='trump'), selected = 'trump'))
+# shiny::HTML('<label for="mm">Choose animal</label><select id="mm"><option value="cat" selected>Cat</option><option value="dog" >Dog</option><option value="trump" >Trump</option></select><script>$("#mm").change(function(){console.log($(this).find("option:selected").attr("value"))})</script>')
+```
+
+
+```{r}
+res = func$BSTable(mtcars)
+res$el
+```
+
+```{r}
+res[[2]]
+res[[3]]
+```

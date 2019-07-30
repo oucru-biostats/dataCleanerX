@@ -61,6 +61,7 @@ shinyServer(function(session, input, output) {
   # Read the data into program
   observeEvent(c(input$datasource, input$sheetPick),{
     fileInfo <- misc$getFileInfo(input$datasource)
+    dataset$fileInfo <- fileInfo
 
     # Exception handling
     if (misc$is_support(fileInfo$fileExt)) {
@@ -315,6 +316,15 @@ shinyServer(function(session, input, output) {
       )
     )
   
+  output$resultPage <-
+    renderUI(
+      list(
+        actionButton(inputId = 'reportGenerate', label = 'Generate Report', block = TRUE, no_outline = TRUE),
+        tags$iframe(style='width:100%;height:400px;', src = dataset$reportFile),
+        tags$iframe(style='width:100%;height:400px;', src = dataset$reportFile2)
+      )
+    )
+  
   output$fullProgram <-
     renderUI(
       list(
@@ -323,22 +333,20 @@ shinyServer(function(session, input, output) {
           tabPanel('Quick Check',
                    tags$script('$(".tab-content .tab-pane[data-value=\'Quick Check\']").append($(\'#DT\'));'),
                    uiOutput('dataOptions'),
-                   # uiOutput('doChecks_simple'),
                    class = 'grand-tab'
           ),
           tabPanel('Custom Profiles',
                    uiOutput('defTable'),
-                   # rHandsontableOutput('defTable'),
                    class = 'grand-tab'
           ),
           tabPanel('Result',
-                   uiOutput('result'),
+                   uiOutput('resultPage'),
                    class = 'grand-tab'
           ),
           header = div(
             id = 'full-program',
             class = 'shadowSurge',
-            tags$script(src='etc/nav-bar.js')
+            tags$script(src = './etc/nav-bar.js')
           )
         ),
         div(
@@ -361,6 +369,8 @@ shinyServer(function(session, input, output) {
   
   
   defTable.generate <- actionButton('defTable.generate', ui_build$ms_icon('Generate'), title = 'Auto generate profiles')
+  
+  ##### Event handlers #########
   
   observeEvent(dataset$data.table, {
     data <- dataset$data.table
@@ -414,7 +424,13 @@ shinyServer(function(session, input, output) {
                           'function(){
                           import("/etc/lib.js").then(lib => lib.SimpleBar_init("#defTable .dataTables_scrollBody"));
                           $("#workingDialog .working-dialog").slideUp();
-                        }')
+                        }'),
+                        initComplete = JS(
+                          'function(){
+                            import("/etc/lib.js").then(lib => lib._datatable_scrollBinding("#defTable"));
+                          }
+                          '
+                        )
                       ),
                       colnames = c('Variables' = 'varName', 'Type' = 'type', 'Accepted Values' = 'values', 'Do check for...' = 'checks', '...where' = 'subset', 'Additional rules' = 'rules')
       )  
@@ -593,10 +609,24 @@ shinyServer(function(session, input, output) {
     if (input$reloadConfirm) session$sendCustomMessage('reloadRequest-ans', TRUE) 
     else session$sendCustomMessage('reloadRequest-ans', FALSE)
   })
-
-  
-  # output$checkUI <- renderUI(ui_build$navlistBuild(methods)) 
-  
+ 
+ observeEvent(input$reportGenerate, {
+   report.file <- paste(tempdir(), 'reportTemplate.Rmd', sep = '/')
+   file.copy('includes/reportTemplate.Rmd', report.file, overwrite = TRUE)
+   write('Piggy piggy', report.file, append = TRUE)
+   report.name <- paste0(tempdir(), '/', paste(dataset$fileInfo$fileName,'report', Sys.Date(), sep = '-'), '.html')
+   rmarkdown::render(report.file, output_file = report.name, params = list(report = Sys.Date()),  envir = new.env(parent = globalenv()))
+   dataset$reportFile <- report.name
+ })
+ 
+ observeEvent(input$reportGenerate, {
+   report.file <- paste('www','reportTemplate.Rmd', sep = '/')
+   file.copy('includes/reportTemplate.Rmd', report.file, overwrite = TRUE)
+   write('Doggy Doggy', report.file, append = TRUE)
+   report.name <- paste0(paste(dataset$fileInfo$fileName,'report', Sys.Date(), sep = '-'), '.html')
+   rmarkdown::render(report.file, output_file = report.name, params = list(report = Sys.Date()),  envir = new.env(parent = globalenv()))
+   dataset$reportFile2 <- report.name
+ })
   
   misc$set_always_on(
     c('inputBox', 'DT', 'fullProgram'),

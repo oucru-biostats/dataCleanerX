@@ -1,6 +1,7 @@
 @import "./etc/lds-roller.scss";
 @import "./etc/typesets.scss";
 @import "./fluent-ui/sass/_References.scss";
+@import "./styles-dark.scss";
 
 @keyframes marquee{
     0%{
@@ -417,6 +418,13 @@ body{
     &.show #checkUI {
         &>.row{     
             &>div{
+                &:first-child{
+                    background-color: $ms-color-neutralLight;
+                    @supports (backdrop-filter: blur(20px)){
+                        background-color: transparent;
+                    }
+                }
+
                 &:nth-child(2){
                     background-color: rgba(255,255,255,1);
                 }
@@ -448,7 +456,6 @@ body{
                     right:0;
                     background-color: transparent;
                     transition: 0.3s background-color ease-in;
-                    // margin-top: -45px;
                     padding-top: 45px;
                     border-radius: 0 4px 4px 0;
                     height: 100%;
@@ -1134,7 +1141,7 @@ body{
            
             >.active>a{
                 background-color: transparent;
-                color: var(--ms-themeDarker);
+                color: $ms-color-themeDark;
             }
             a {
                 transition: all 0.3s ease;
@@ -1316,7 +1323,7 @@ body{
 }
 
 .doki-kaboom{
-    animation: doki-kaboom 0.75s ease-in;
+    animation: doki-kaboom 1s ease-in;
 }
 
 .tab-content .grand-tab.tab-pane {
@@ -1365,7 +1372,9 @@ body{
     }
 } 
 
-
+.darkmode-layer, .darkmode-toggle {
+    z-index: 100000;
+}
 
 .doki-doki{
     animation: doki-doki 0.5s ease-in-out infinite alternate-reverse;
